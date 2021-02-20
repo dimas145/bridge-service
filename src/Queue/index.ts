@@ -1,4 +1,4 @@
-import amqp, { Channel } from 'amqplib';
+import amqp, { Channel } from 'amqplib'
 
 interface QueueOption {
     url?: string
@@ -16,9 +16,16 @@ export class Queue {
                 const ch = await conn.createChannel()
                 this.connection = ch
             } catch (error) {
-                console.log("Error starting queue", error)
+                console.log('Error starting queue', error)
             }
         }
+    }
+
+    public static get conn() {
+        if (!this.connection) {
+            throw Error('Init queue first')
+        }
+        return this.connection
     }
 
     public static sendMessage(queueName: string, message: string) {

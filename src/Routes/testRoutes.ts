@@ -1,9 +1,8 @@
-import express from "express"
-import { sendQueue } from "../Controller/Test/sendQueue";
+import express from 'express'
+import { sendQueue } from '../Controller/Test/sendQueue'
 
-const testRoute = express.Router();
+const testRoute = express.Router()
 
-testRoute.post("/sendQueue", sendQueue);
-
+testRoute.post('/sendQueue', sendQueue)
 
 export { testRoute }
