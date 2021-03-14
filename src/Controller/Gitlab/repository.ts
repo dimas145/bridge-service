@@ -5,7 +5,7 @@ const ASSIGNMENT_NAME = 'programming'
 
 export async function createRepository(req: Request, res: Response){
 
-    const { assignmentId } = req.params
+    const { courseId, activityId } = req.params
 
     const projectService = new Projects({
         host: process.env.GITLAB_HOST,
@@ -18,7 +18,7 @@ export async function createRepository(req: Request, res: Response){
     })
 
     const project = await projectService.create({
-        name: ASSIGNMENT_NAME+'-'+assignmentId,
+        name: ASSIGNMENT_NAME+'-'+courseId+'-'+activityId,
         visibility: 'public',
         merge_requests_access_level: 'enabled',
         issues_access_level: 'enabled',
@@ -27,7 +27,7 @@ export async function createRepository(req: Request, res: Response){
 
     const projectHook = await projectHookService.add(
         Number(project.id),
-        process.env.SERVICE_BRIDGE_URL + '/webhook/'+ assignmentId, {
+        process.env.SERVICE_BRIDGE_URL + '/webhook/'+ courseId+'/'+activityId, {
             merge_requests_events: true,
             token: process.env.GITLAB_WEBHOOK_SECRET_TOKEN,
         })

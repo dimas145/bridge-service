@@ -1,7 +1,7 @@
 export namespace Webhook {
 
     type User = {
-        id: string,
+        id: number,
         name: string,
         username: string,
         avatar_url: string,
@@ -42,8 +42,8 @@ export namespace Webhook {
     }
 
     type ObjectAttributes = {
-        assignee_id: string,
-        author_id: string,
+        assignee_id: number,
+        author_id: number,
         created_at: string,
         description: string,
         head_pipeline_id: string,

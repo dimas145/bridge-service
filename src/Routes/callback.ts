@@ -3,6 +3,6 @@ import { Grader } from '../Controller/Callback/grader'
 
 const callbackRoute = express.Router()
 
-callbackRoute.post('/:assignmentId', Grader)
+callbackRoute.post('/', Grader)
 
 export { callbackRoute }
