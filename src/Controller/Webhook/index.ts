@@ -3,12 +3,14 @@ import { Repositories } from '@gitbeaker/node'
 import { Queue } from '../../Queue'
 import { Constant } from '../../constant'
 import { Webhook as WebhookType } from '../../Type/Webhook'
-const MERGE_REQUEST_HOOK = 'Merge Request Hook'
 
 export async function Webhook(req: Request, res: Response) {
-    if (req.headers['x-gitlab-event'] !== MERGE_REQUEST_HOOK || req.headers['x-gitlab-token'] !== process.env.GITLAB_WEBHOOK_SECRET_TOKEN) {
+    res.send('received') // just to give 200 to gitlab
+
+    if (req.headers['x-gitlab-event'] !== Constant.MERGE_REQUEST_HOOK || req.headers['x-gitlab-token'] !== process.env.GITLAB_WEBHOOK_SECRET_TOKEN) {
         return
     }
+
     const { assignmentId } = req.params
 
     const webhookBody: WebhookType.WebhookBody = req.body
@@ -22,6 +24,7 @@ export async function Webhook(req: Request, res: Response) {
     * Send to queue:
     * - tar.gz data
     * - student user data
+    * - tescases
     */
 
     // how to map project Id / gitlab user data / gitlab user name to moodle user data
@@ -34,9 +37,17 @@ export async function Webhook(req: Request, res: Response) {
         'sourceCodeBase64': targzBase64,
         projectId,
         assignmentId,
-        'entry': 'main.py'
+        'entry': 'main.py',
+        'testcases': [
+            {
+                'input': '1',
+                'output': 'True'
+            },
+            {
+                'input': '2',
+                'output': 'False'
+            }
+        ]
     }
     Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
-    res.send('received') // just to give 200 to gitlab
-
 }

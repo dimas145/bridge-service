@@ -28,7 +28,8 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "rootDir": "src"
+    "rootDir": "src",
+    "typeRoots": ["./node_modules/@types", "./src/types/*"]
   },
   "exclude": [
     "node_modules"
