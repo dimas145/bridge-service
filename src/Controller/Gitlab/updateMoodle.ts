@@ -16,7 +16,7 @@ export async function updateMoodle(req: Request, res: Response){
         await model.save()
     } catch (error) {
         if (error.name == 'MongoError' && error.code == 11000) {
-            res.send('already exist')
+            return res.send('already exist')
         }
         return res.send(error.message)
     }

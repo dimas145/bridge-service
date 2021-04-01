@@ -6,7 +6,7 @@ import { updateMoodle } from '../Controller/Gitlab/updateMoodle'
 
 const gitlabRoute = express.Router()
 
-gitlabRoute.post('/createRepository/:courseId', createRepository)
+gitlabRoute.post('/createRepository/:courseId/:activityId', createRepository)
 
 passport.use(new GitLabStrategy({
     clientID: process.env.GITLAB_APP_ID as string,
