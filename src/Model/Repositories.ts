@@ -4,7 +4,7 @@ interface IRepository extends Document {
     courseId: number,
     activityId: number,
     gitlabUrl: string,
-    metricFile: {
+    metricFile?: {
         contentHash: string,
         mimetype: string,
         rawContent: string

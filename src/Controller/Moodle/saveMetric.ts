@@ -8,8 +8,6 @@ export async function saveMetric(req: Request, res: Response) {
 
     const { contentHash, mimetype, rawContent } = req.body
 
-    console.log(req.body)
-
     if (!contentHash || !mimetype || !rawContent) {
         return res.status(400).send('Bad request')
     }

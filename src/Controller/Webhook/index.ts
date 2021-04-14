@@ -4,6 +4,7 @@ import { Queue } from '../../Queue'
 import { Constant } from '../../constant'
 import { Webhook as WebhookType } from '../../Type/Webhook'
 import { User } from '../../Model/User'
+import { Repository } from '../../Model/Repositories'
 
 export async function Webhook(req: Request, res: Response) {
     res.send('received') // just to give 200 to gitlab
@@ -41,23 +42,30 @@ export async function Webhook(req: Request, res: Response) {
         return // no need to process user that hasn't register
     }
 
-    const data = {
+    const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
+
+    if (!repository || !repository.metricFile?.mimetype){
+        return // no metric file or repo
+    }
+
+    let data = {
         'sourceCodeBase64': targzBase64,
         projectId,
         'userId': student.userId,
         courseId,
         activityId,
-        'entry': 'main.py',
-        'testcases': [
-            {
-                'input': '1',
-                'output': 'True'
-            },
-            {
-                'input': '2',
-                'output': 'False'
-            }
-        ]
+    }
+
+    if (repository.metricFile.mimetype == 'application/json'){
+        data = {
+            ...data,
+            ...JSON.parse(Buffer.from(repository.metricFile.rawContent, 'base64').toString())
+        }
+    } else {
+        data = {
+            ...data,
+            ...repository.metricFile
+        }
     }
 
     Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
