@@ -5,6 +5,7 @@ import { testRoute } from './Routes/testRoutes'
 import { webhookRoute } from './Routes/webhook'
 import passport from 'passport'
 import cors from 'cors'
+import { moodleRoute } from './Routes/moodle'
 
 const app = express()
 
@@ -14,6 +15,10 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
+
+app.use(express.json())
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.all('/ping', (req, res) => {
     console.log('hit', new Date())
@@ -26,14 +31,10 @@ app.all('/ping', (req, res) => {
     })
 })
 
-app.use(express.json())
-app.use(passport.initialize())
-app.use(passport.session())
-
-
 app.use('/test', testRoute)
 app.use('/webhook', webhookRoute)
 app.use('/callback', callbackRoute)
 app.use('/gitlab', gitlabRoute)
+app.use('/moodle', moodleRoute)
 
 export default app

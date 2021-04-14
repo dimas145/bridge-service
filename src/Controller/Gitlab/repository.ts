@@ -4,6 +4,8 @@ import { Repository } from '../../Model/Repositories'
 
 export async function createRepository(req: Request, res: Response) {
 
+    console.log(`hit ${new Date()} - create repository`)
+
     const { courseId, activityId } = req.params
     const { name } = req.query
 
@@ -23,9 +25,12 @@ export async function createRepository(req: Request, res: Response) {
         token: process.env.GITLAB_PRIVATE_TOKEN
     })
 
+    // return res.status(400).send({ success: false })
+
     try {
         const project = await projectService.create({
-            name: name + '-' + courseId + '-' + activityId,
+            // name: `${name}-${courseId}-${activityId}-${new Date().getTime()}`,
+            name: `${name}-${courseId}-${activityId}`,
             visibility: 'public',
             merge_requests_access_level: 'enabled',
             issues_access_level: 'enabled',
@@ -57,7 +62,9 @@ export async function createRepository(req: Request, res: Response) {
             return res.send(error.message)
         }
 
-        return res.send({ success: true })
+        return res.send({
+            success: true, gitlabUrl: project.web_url
+        })
     } catch (error) {
         return res.status(400).send({ success: false, error: error.message })
     }

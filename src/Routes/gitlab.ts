@@ -3,10 +3,11 @@ import passport from 'passport'
 import GitLabStrategy from 'passport-gitlab2'
 import { createRepository } from '../Controller/Gitlab/repository'
 import { updateMoodle } from '../Controller/Gitlab/updateMoodle'
+import { RequestWrapper } from '../Utils/requestWrapper'
 
 const gitlabRoute = express.Router()
 
-gitlabRoute.post('/createRepository/:courseId/:activityId', createRepository)
+gitlabRoute.post('/createRepository/:courseId/:activityId', RequestWrapper(createRepository))
 
 passport.use(new GitLabStrategy({
     clientID: process.env.GITLAB_APP_ID as string,

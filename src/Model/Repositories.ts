@@ -3,7 +3,12 @@ import mongoose, { Schema, Document } from 'mongoose'
 interface IRepository extends Document {
     courseId: number,
     activityId: number,
-    gitlabUrl: string
+    gitlabUrl: string,
+    metricFile: {
+        contentHash: string,
+        mimetype: string,
+        rawContent: string
+    }
 }
 
 const RepositorySchema = new Schema({
@@ -19,6 +24,17 @@ const RepositorySchema = new Schema({
         type: String,
         required: true,
     },
+    metricFile: {
+        contentHash: {
+            type: String
+        },
+        mimetype: {
+            type: String
+        },
+        rawContent: {  // base64 binary file
+            type: String
+        }
+    }
 })
 
 const Repository = mongoose.model<IRepository>('Repository', RepositorySchema)

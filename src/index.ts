@@ -18,7 +18,12 @@ const main = async () => {
     const MONGODB_URL = process.env.MONGODB_URL as string
 
     try {
-        await mongoose.connect(MONGODB_URL, { useUnifiedTopology: true, useNewUrlParser: true })
+        await mongoose.connect(MONGODB_URL, {
+            useUnifiedTopology: true,
+            useNewUrlParser: true,
+            useFindAndModify: false,
+            useCreateIndex: true
+        })
         console.log('success connect to mongodb')
     } catch (error) {
         console.log("Can't connect to mongodb", error)
