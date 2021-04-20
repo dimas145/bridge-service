@@ -7,7 +7,7 @@ interface IRepository extends Document {
     metricFile?: {
         contentHash: string,
         mimetype: string,
-        rawContent: string
+        filename: string
     }
 }
 
@@ -31,7 +31,7 @@ const RepositorySchema = new Schema({
         mimetype: {
             type: String
         },
-        rawContent: {  // base64 binary file
+        filename: {  // base64 binary file
             type: String
         }
     }

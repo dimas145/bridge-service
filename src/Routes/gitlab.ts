@@ -12,7 +12,7 @@ gitlabRoute.post('/createRepository/:courseId/:activityId', RequestWrapper(creat
 passport.use(new GitLabStrategy({
     clientID: process.env.GITLAB_APP_ID as string,
     clientSecret: process.env.GITLAB_APP_SECRET as string,
-    callbackURL: 'http://localhost:8080/gitlab/auth/callback'
+    callbackURL: 'http://localhost:8085/gitlab/auth/callback'
 },
 function (_: any, __: any, profile: any, cb: any) {
     return cb(null, profile)

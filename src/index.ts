@@ -7,7 +7,7 @@ import mongoose from 'mongoose'
 const main = async () => {
 
 
-    const PORT = process.env.PORT || 8080
+    const PORT = process.env.PORT || 8085
 
     await Queue.init({
         url: process.env.QUEUE || 'amqp://localhost'
