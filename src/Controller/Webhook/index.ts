@@ -5,6 +5,7 @@ import { Constant } from '../../constant'
 import { Webhook as WebhookType } from '../../Type/Webhook'
 import { User } from '../../Model/User'
 import { Repository } from '../../Model/Repositories'
+import { getFile } from '../../Utils/file'
 
 export async function Webhook(req: Request, res: Response) {
     res.send('received') // just to give 200 to gitlab
@@ -44,7 +45,7 @@ export async function Webhook(req: Request, res: Response) {
 
     const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
 
-    if (!repository || !repository.metricFile?.mimetype){
+    if (!repository || !repository.metricFile?.filename){
         return // no metric file or repo
     }
 
@@ -57,9 +58,10 @@ export async function Webhook(req: Request, res: Response) {
     }
 
     if (repository.metricFile.mimetype == 'application/json'){
+        const rawContent = await getFile(repository.metricFile.filename)
         data = {
             ...data,
-            ...JSON.parse(Buffer.from(repository.metricFile.rawContent, 'base64').toString())
+            ...JSON.parse(rawContent.toString())
         }
     } else {
         data = {

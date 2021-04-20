@@ -6,6 +6,7 @@ import { webhookRoute } from './Routes/webhook'
 import passport from 'passport'
 import cors from 'cors'
 import { moodleRoute } from './Routes/moodle'
+import path from 'path'
 
 const app = express()
 
@@ -15,6 +16,8 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions))
+
+app.use('/files', express.static(path.join(__dirname, 'Files')))
 
 app.use(express.json())
 app.use(passport.initialize())
