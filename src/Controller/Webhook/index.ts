@@ -3,9 +3,11 @@ import { Repositories } from '@gitbeaker/node'
 import { Queue } from '../../Queue'
 import { Constant } from '../../constant'
 import { Webhook as WebhookType } from '../../Type/Webhook'
-import { User } from '../../Model/User'
-import { Repository } from '../../Model/Repositories'
+import { Student } from '../../Model/Student'
+import { Repository } from '../../Model/Repository'
 import { getFile } from '../../Utils/file'
+import { MetricFile } from '../../Model/MetricFile'
+import { SubmissionHistory } from '../../Model/SubmissionHistory'
 
 export async function Webhook(req: Request, res: Response) {
     res.send('received') // just to give 200 to gitlab
@@ -36,17 +38,32 @@ export async function Webhook(req: Request, res: Response) {
 
     const targzSourceCode: any = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
     const targzBase64 = Buffer.from(targzSourceCode).toString('base64')
-    const student = await User.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
-    console.log('student',student)
-    // console.log(webhookBody)
-    if(!student){
+    const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
+
+    if (!student) {
         return // no need to process user that hasn't register
     }
 
     const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
-
-    if (!repository || !repository.metricFile?.filename){
+    if (!repository) {
         return // no metric file or repo
+    }
+
+    const metricFile = await MetricFile.findOne({ repository })
+
+    if (!metricFile) {
+        return // no metric file or repo
+    }
+
+    if (new Date() > repository.dueDate) { // ignore late submission
+        return
+    }
+
+    if (repository.gradingMethod == 'first') {
+        const [_, count] = await SubmissionHistory.findAndCount({ repository, student })
+        if (count > 0) { // not accepting any submission
+            return
+        }
     }
 
     let data = {
@@ -57,8 +74,8 @@ export async function Webhook(req: Request, res: Response) {
         activityId,
     }
 
-    if (repository.metricFile.mimetype == 'application/json'){
-        const rawContent = await getFile(repository.metricFile.filename)
+    if (metricFile.mimetype == 'application/json') {
+        const rawContent = await getFile(metricFile.filename)
         data = {
             ...data,
             ...JSON.parse(rawContent.toString())
@@ -66,7 +83,7 @@ export async function Webhook(req: Request, res: Response) {
     } else {
         data = {
             ...data,
-            ...repository.metricFile
+            ...metricFile
         }
     }
 

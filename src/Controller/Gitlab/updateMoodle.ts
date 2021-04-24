@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import axios from 'axios'
-import { User } from '../../Model/User'
+import { Student } from '../../Model/Student'
 import { Constant } from '../../constant'
 
 export async function updateMoodle(req: Request, res: Response){
     const userId = JSON.parse(req.query['state']?.toString() || '{}')?.['userId']
 
-    const model = new User({
+    const model = Student.create({
         userId,
         username: req.session.passport.user.username,
         gitlabProfileId: req.session.passport.user.id
@@ -15,12 +15,8 @@ export async function updateMoodle(req: Request, res: Response){
     try {
         await model.save()
     } catch (error) {
-        if (error.name == 'MongoError' && error.code == 11000) {
-            return res.send('already exist')
-        }
-        return res.send(error.message)
+        return res.send('already exist')
     }
-
 
     const resp = await axios.get(process.env.MOODLE_HOST + '/webservice/rest/server.php', {
         params: {

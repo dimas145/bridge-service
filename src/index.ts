@@ -1,8 +1,8 @@
 import dotenv from 'dotenv'
 dotenv.config()
+import { createConnection } from 'typeorm'
 import app from './app'
 import { Queue } from './Queue/'
-import mongoose from 'mongoose'
 
 const main = async () => {
 
@@ -14,19 +14,11 @@ const main = async () => {
     })
     console.log('success connect to rabbitmq')
 
-
-    const MONGODB_URL = process.env.MONGODB_URL as string
-
     try {
-        await mongoose.connect(MONGODB_URL, {
-            useUnifiedTopology: true,
-            useNewUrlParser: true,
-            useFindAndModify: false,
-            useCreateIndex: true
-        })
-        console.log('success connect to mongodb')
+        createConnection()
+        console.log('success connect to db')
     } catch (error) {
-        console.log("Can't connect to mongodb", error)
+        console.log("Can't connect to db", error)
         process.exit(1)
     }
 
