@@ -1,0 +1,21 @@
+version: "3"
+services:
+  psql:
+    image: postgres:13-alpine
+    ports:
+        - 5433:5432
+    volumes:
+        - "./postgres_data:/var/lib/postgresql/data"
+    networks:
+        - bridge_service
+    environment:
+      POSTGRES_DB: "bridge_service"
+      POSTGRES_USER: "bram"
+      POSTGRES_PASSWORD: "brambram123"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    
+networks:
+  bridge_service:
+    driver: bridge
+    name: bridge_service
+

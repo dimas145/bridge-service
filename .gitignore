@@ -9,6 +9,8 @@ lib-cov
 *.gz
 *.swp
 
+docker-conf/
+
 pids
 logs
 results

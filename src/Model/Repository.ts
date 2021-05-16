@@ -16,13 +16,12 @@ export class Repository extends BaseModel {
     @Column({ type: 'text', nullable: false })
     gitlabUrl: string
 
-    @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.repository)
-    submissionHistory: SubmissionHistory
-
     @Column({ default: 'last', enum: ['first', 'last'] })
     gradingMethod: 'first' | 'last'
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'timestamp' })
     dueDate: Date
 
+    @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.repository)
+    submissionHistory: SubmissionHistory
 }

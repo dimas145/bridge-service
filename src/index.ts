@@ -10,7 +10,7 @@ const main = async () => {
     const PORT = process.env.PORT || 8085
 
     await Queue.init({
-        url: process.env.QUEUE || 'amqp://localhost'
+        url: process.env.QUEUE_URL
     })
     console.log('success connect to rabbitmq')
 
