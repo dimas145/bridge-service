@@ -1,7 +1,7 @@
 import amqp, { Channel } from 'amqplib'
 
 interface QueueOption {
-    url?: string
+    url: string
 }
 
 export class Queue {
@@ -12,7 +12,7 @@ export class Queue {
     public static async init(queueOption: QueueOption) {
         if (!this.connection) {
             try {
-                const conn = await amqp.connect(queueOption.url || 'amqp://localhost')
+                const conn = await amqp.connect(queueOption.url)
                 const ch = await conn.createChannel()
                 this.connection = ch
             } catch (error) {
