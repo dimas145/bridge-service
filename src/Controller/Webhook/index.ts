@@ -10,7 +10,7 @@ import { MetricFile } from '../../Model/MetricFile'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
 
 export async function Webhook(req: Request, res: Response) {
-    res.send('received') // just to give 200 to gitlab
+    // res.send('received') // just to give 200 to gitlab
 
     if (req.headers['x-gitlab-event'] !== Constant.MERGE_REQUEST_HOOK || req.headers['x-gitlab-token'] !== process.env.GITLAB_WEBHOOK_SECRET_TOKEN) {
         return
@@ -31,8 +31,6 @@ export async function Webhook(req: Request, res: Response) {
     * - student user data
     * - tescases
     */
-
-    // how to map project Id / gitlab user data / gitlab user name to moodle user data
 
     const projectId = webhookBody.object_attributes.source.id
     let targzSourceCode: any
@@ -93,4 +91,5 @@ export async function Webhook(req: Request, res: Response) {
     }
 
     Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
+    return res.send('received')
 }

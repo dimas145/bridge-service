@@ -28,10 +28,13 @@ export class Queue {
         return this.connection
     }
 
-    public static sendMessage(queueName: string, message: string) {
-        this.connection.assertQueue(queueName, { durable: false })
+    public static async sendMessage(queueName: string, message: string) {
+        this.connection.assertQueue(queueName, { durable: false }).then(
+            () => {
+                this.connection.sendToQueue(queueName, Buffer.from(message))
+                console.log(`message: ${message} is sent`)
+            }
+        )
 
-        this.connection.sendToQueue(queueName, Buffer.from(message))
-        console.log(`message: ${message} is sent`)
     }
 }
