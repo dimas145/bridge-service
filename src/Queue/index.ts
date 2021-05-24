@@ -29,12 +29,9 @@ export class Queue {
     }
 
     public static async sendMessage(queueName: string, message: string) {
-        this.connection.assertQueue(queueName, { durable: false }).then(
-            () => {
-                this.connection.sendToQueue(queueName, Buffer.from(message))
-                console.log(`message: ${message} is sent`)
-            }
-        )
+        await this.connection.assertQueue(queueName, { durable: false })
+        this.connection.sendToQueue(queueName, Buffer.from(message))
+        console.log(`message: ${message} is sent`)
 
     }
 }

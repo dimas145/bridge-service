@@ -10,7 +10,7 @@ import { MetricFile } from '../../Model/MetricFile'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
 
 export async function Webhook(req: Request, res: Response) {
-    // res.send('received') // just to give 200 to gitlab
+    res.send('received') // just to give 200 to gitlab
 
     if (req.headers['x-gitlab-event'] !== Constant.MERGE_REQUEST_HOOK || req.headers['x-gitlab-token'] !== process.env.GITLAB_WEBHOOK_SECRET_TOKEN) {
         return
@@ -37,6 +37,7 @@ export async function Webhook(req: Request, res: Response) {
     try {
         targzSourceCode = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
     } catch (e) {
+        console.log('error get student source code', projectId)
         console.log(e)
         return
     }
@@ -90,6 +91,6 @@ export async function Webhook(req: Request, res: Response) {
         }
     }
 
-    Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
-    return res.send('received')
+    await Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
+    // return res.send('received')
 }
