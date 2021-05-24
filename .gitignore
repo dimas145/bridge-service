@@ -10,6 +10,7 @@ lib-cov
 *.swp
 
 docker-conf/
+postgres_data/
 
 pids
 logs
