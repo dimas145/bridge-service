@@ -35,8 +35,13 @@ export async function Webhook(req: Request, res: Response) {
     // how to map project Id / gitlab user data / gitlab user name to moodle user data
 
     const projectId = webhookBody.object_attributes.source.id
-
-    const targzSourceCode: any = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
+    let targzSourceCode: any
+    try {
+        targzSourceCode = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
+    } catch (e) {
+        console.log(e)
+        return
+    }
     const targzBase64 = Buffer.from(targzSourceCode).toString('base64')
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
 
