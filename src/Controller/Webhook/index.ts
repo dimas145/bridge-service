@@ -6,8 +6,12 @@ import { Webhook as WebhookType } from '../../Type/Webhook'
 import { Student } from '../../Model/Student'
 import { Repository } from '../../Model/Repository'
 import { getFile } from '../../Utils/file'
+import { GitLab } from '../../Type/Gitlab'
 import { MetricFile } from '../../Model/MetricFile'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
+import archiver from 'archiver'
+import fs from 'fs'
+import { v4 } from 'uuid'
 
 export async function Webhook(req: Request, res: Response) {
     res.send('received') // just to give 200 to gitlab
@@ -33,15 +37,15 @@ export async function Webhook(req: Request, res: Response) {
     */
 
     const projectId = webhookBody.object_attributes.source.id
-    let targzSourceCode: any
-    try {
-        targzSourceCode = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
-    } catch (e) {
-        console.log('error get student source code', projectId)
-        console.log(e)
-        return
-    }
-    const targzBase64 = Buffer.from(targzSourceCode).toString('base64')
+    // let targzSourceCode: any
+    // try {
+    //     targzSourceCode = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
+    // } catch (e) {
+    //     console.log('error get student source code', projectId)
+    //     console.log(e)
+    //     return
+    // }
+    const targzBase64 = await generateArchive(projectId as string)
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
 
     if (!student) {
@@ -93,4 +97,37 @@ export async function Webhook(req: Request, res: Response) {
 
     await Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
     // return res.send('received')
+}
+
+export async function generateArchive(projectId: string) {
+    const repoService = new Repositories({
+        host: process.env.GITLAB_HOST,
+        token: process.env.GITLAB_PRIVATE_TOKEN
+    })
+
+    const archive = archiver('tar', { gzip: true })
+    const fileTree = await repoService.tree(projectId) as GitLab.RepositoryTree[]
+
+    for (const tree of fileTree) {
+        const rawContent = (await repoService.showBlobRaw(projectId, tree.id)) as unknown as Buffer
+        archive.append(rawContent, { name: `${projectId}/${tree.path}` })
+    }
+    await archive.finalize()
+    const fileLocation = __dirname + `/${v4()}.tar.gz`
+    return new Promise<string>((resolve, reject) =>{
+        const output = fs.createWriteStream(fileLocation)
+        archive.pipe(output)
+        output.on('finish',() => {
+            const contents = fs.readFileSync(fileLocation, { encoding: 'base64' })
+            fs.unlinkSync(fileLocation)
+            resolve(contents)
+        })
+        output.on('error', () => reject('can\'t generate tar.gz file'))
+    })
+}
+
+export async function testArchive(req: Request, res: Response) {
+    const { projectId } = req.query
+    console.log(await generateArchive(projectId as string))
+    return res.send('mantul')
 }
