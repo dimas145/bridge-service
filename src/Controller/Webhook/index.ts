@@ -24,11 +24,6 @@ export async function Webhook(req: Request, res: Response) {
 
     const webhookBody: WebhookType.WebhookBody = req.body
 
-    const repoService = new Repositories({
-        host: process.env.GITLAB_HOST,
-        token: process.env.GITLAB_PRIVATE_TOKEN
-    })
-
     /**
     * Send to queue:
     * - tar.gz data
