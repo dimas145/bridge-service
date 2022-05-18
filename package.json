@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@gitbeaker/node": "^28.0.4",
-    "amqplib": "^0.6.0",
+    "@types/dockerode": "^3.3.8",
+    "amqplib": "^0.8.0",
     "axios": "^0.21.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
