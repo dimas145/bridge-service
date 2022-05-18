@@ -5,8 +5,6 @@ import app from './app'
 import { Queue } from './Queue/'
 
 const main = async () => {
-
-
     const PORT = process.env.PORT || 8085
 
     await Queue.init({

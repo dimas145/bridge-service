@@ -7,6 +7,7 @@ import passport from 'passport'
 import cors from 'cors'
 import { moodleRoute } from './Routes/moodle'
 import path from 'path'
+import { dockerRoute } from './Routes/dockerRoutes'
 
 const app = express()
 
@@ -39,5 +40,6 @@ app.use('/webhook', webhookRoute)
 app.use('/callback', callbackRoute)
 app.use('/gitlab', gitlabRoute)
 app.use('/moodle', moodleRoute)
+app.use('/docker', dockerRoute)
 
 export default app
