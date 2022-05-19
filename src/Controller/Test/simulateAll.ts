@@ -6,7 +6,7 @@ import axios from 'axios'
 export async function simulateAll(req: Request, res: Response) {
     console.log('Simulating...')
 
-    const { courseId, activityId, contentHashRef, extensionRef, rawContentRef, graderUrl, contentHashSrc, extensionSrc, rawContentSrc } = req.body
+    const { courseId, activityId, graderUrl, rawContentSolution } = req.body
 
     // mock create repo
     const instance: number = 1
@@ -39,16 +39,16 @@ export async function simulateAll(req: Request, res: Response) {
 
     // mock gitlab webhook (assume already call save reference)
     CodeReference.find({ repository }).then((references) => {
-        console.log('references')
-        console.log(references)
-        // await axios.post(graderUrl, { // TODO
-        //     id: 1,
-        //     name: 'Test',
-        //     references: references,
-        //     contentHash: contentHashSrc,
-        //     extension: extensionSrc,
-        //     rawContent: rawContentSrc,
-        // })
+        axios.post(graderUrl, {
+            id: 1,
+            name: 'Test',
+            references: references.map((ref) => ref.content),
+            solution: rawContentSolution,
+            projectId: 1,
+            userId: 1,
+            courseId,
+            activityId,
+        })
     })
 
     return res.send('sent')
