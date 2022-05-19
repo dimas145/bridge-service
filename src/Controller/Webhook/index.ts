@@ -5,7 +5,6 @@ import { Constant } from '../../constant'
 import { Webhook as WebhookType } from '../../Type/Webhook'
 import { Student } from '../../Model/Student'
 import { Repository } from '../../Model/Repository'
-import { getFile } from '../../Utils/file'
 import { CodeReference } from '../../Model/CodeReference'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
 
@@ -78,17 +77,9 @@ export async function Webhook(req: Request, res: Response) {
         activityId,
     }
 
-    if (reference.extension == 'json') {
-        const rawContent = await getFile(reference.filename)
-        data = {
-            ...data,
-            ...JSON.parse(rawContent.toString())
-        }
-    } else {
-        data = {
-            ...data,
-            ...reference
-        }
+    data = {
+        ...data,
+        ...reference
     }
 
     await Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))

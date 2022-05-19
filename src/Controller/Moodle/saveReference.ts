@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
-import { saveFile } from '../../Utils/file'
 
 export async function saveReference(req: Request, res: Response) {
     console.log(`hit ${new Date()} - save code reference file`)
@@ -36,11 +35,11 @@ export async function saveReference(req: Request, res: Response) {
         }
     }
 
-    const filename = await saveFile(rawContent, extension)
+    // const filename = await saveFile(rawContent, extension)
     const model = CodeReference.create({
         contentHash,
         extension,
-        filename,
+        content: rawContent,
         repository
     })
     await model.save()

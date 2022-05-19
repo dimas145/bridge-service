@@ -11,7 +11,7 @@ export class CodeReference extends BaseModel {
     extension: string
 
     @Column({ type: 'text', nullable: false })
-    filename: string
+    content: string
 
     @ManyToOne(() => Repository, repository => repository.id)
     repository: Repository
