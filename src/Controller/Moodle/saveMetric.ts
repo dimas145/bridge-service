@@ -34,22 +34,16 @@ export async function saveMetric(req: Request, res: Response) {
                 message: 'already created'
             })
         }
-        const filename = await saveFile(rawContent, extension)
-        await MetricFile.update({ repository },{
-            contentHash,
-            extension,
-            filename
-        })
-    } else {
-        const filename = await saveFile(rawContent, extension)
-        const model = await MetricFile.create({
-            contentHash,
-            extension,
-            filename,
-            repository
-        })
-        await model.save()
     }
+
+    const filename = await saveFile(rawContent, extension)
+    const model = await MetricFile.create({
+        contentHash,
+        extension,
+        filename,
+        repository
+    })
+    await model.save()
 
     return res.send({
         success: true

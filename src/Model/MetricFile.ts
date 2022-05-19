@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, JoinColumn } from 'typeorm'
+import { Column, Entity, ManyToOne } from 'typeorm'
 import { BaseModel } from './Base'
 import { Repository } from './Repository'
 
@@ -8,12 +8,11 @@ export class MetricFile extends BaseModel {
     contentHash: string
 
     @Column({ type: 'text', nullable: false })
-    mimetype: string
+    extension: string
 
     @Column({ type: 'text', nullable: false })
     filename: string
 
-    @OneToOne(() => Repository)
-    @JoinColumn()
+    @ManyToOne(() => Repository, repository => repository.id)
     repository: Repository
 }
