@@ -1,16 +1,16 @@
 import { Request, Response } from 'express'
 import { MetricFile } from '../../Model/MetricFile'
 import { Repository } from '../../Model/Repository'
-import { deleteFile, saveFile } from '../../Utils/file'
+import { saveFile } from '../../Utils/file'
 
 export async function saveMetric(req: Request, res: Response) {
     console.log(`hit ${new Date()} - save metric file`)
 
     const { courseId, activityId } = req.params
 
-    const { contentHash, mimetype, rawContent } = req.body
+    const { contentHash, extension, rawContent } = req.body
 
-    if (!contentHash || !mimetype || !rawContent) {
+    if (!contentHash || !extension || !rawContent) {
         return res.status(400).send('Bad request')
     }
 
@@ -34,18 +34,17 @@ export async function saveMetric(req: Request, res: Response) {
                 message: 'already created'
             })
         }
-        deleteFile(metricFile.filename)
-        const filename = await saveFile(rawContent, mimetype)
+        const filename = await saveFile(rawContent, extension)
         await MetricFile.update({ repository },{
             contentHash,
-            mimetype,
+            extension,
             filename
         })
     } else {
-        const filename = await saveFile(rawContent, mimetype)
+        const filename = await saveFile(rawContent, extension)
         const model = await MetricFile.create({
             contentHash,
-            mimetype,
+            extension,
             filename,
             repository
         })

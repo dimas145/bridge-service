@@ -78,7 +78,7 @@ export async function Webhook(req: Request, res: Response) {
         activityId,
     }
 
-    if (metricFile.mimetype == 'application/json') {
+    if (metricFile.extension == 'json') {
         const rawContent = await getFile(metricFile.filename)
         data = {
             ...data,

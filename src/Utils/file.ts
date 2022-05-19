@@ -1,10 +1,9 @@
 import fs from 'fs'
-import mime from 'mime-types'
 import { v4 } from 'uuid'
 
-export async function saveFile(base64Data: string, mimeType: string) {
+export async function saveFile(base64Data: string, extension: string) {
     const buf = Buffer.from(base64Data, 'base64')
-    const filename = `${v4()}.${mime.extension(mimeType)}`
+    const filename = `${v4()}.${extension}`
     fs.writeFileSync(`src/Files/${filename}`, buf)
     return filename
 }
