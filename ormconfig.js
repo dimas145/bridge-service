@@ -9,5 +9,5 @@ module.exports = {
     'password': process.env.DATABASE_PASSWORD,
     'database': process.env.DATABASE_NAME,
     'synchronize': true,
-    'entities': ['src/Model/*.ts']
+    'entities': ['dist/Model/*.js'] // TODO create migrate for production
 }

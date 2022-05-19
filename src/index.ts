@@ -13,7 +13,8 @@ const main = async () => {
     console.log('success connect to rabbitmq')
 
     try {
-        createConnection()
+        const connection = await createConnection()
+        await connection.synchronize()
         console.log('success connect to db')
     } catch (error) {
         console.log("Can't connect to db", error)
