@@ -3,7 +3,7 @@ import { BaseModel } from './Base'
 import { Repository } from './Repository'
 
 @Entity()
-export class MetricFile extends BaseModel {
+export class CodeReference extends BaseModel {
     @Column({ type: 'text', nullable: false })
     contentHash: string
 

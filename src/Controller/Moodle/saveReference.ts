@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
-import { MetricFile } from '../../Model/MetricFile'
+import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
 import { saveFile } from '../../Utils/file'
 
-export async function saveMetric(req: Request, res: Response) {
-    console.log(`hit ${new Date()} - save metric file`)
+export async function saveReference(req: Request, res: Response) {
+    console.log(`hit ${new Date()} - save code reference file`)
 
     const { courseId, activityId } = req.params
 
@@ -19,7 +19,7 @@ export async function saveMetric(req: Request, res: Response) {
         activityId: Number(activityId)
     })
 
-    const metricFile = await MetricFile.findOne({
+    const reference = await CodeReference.findOne({
         repository
     })
 
@@ -27,8 +27,8 @@ export async function saveMetric(req: Request, res: Response) {
         return res.status(404).send('repository not found')
     }
 
-    if (metricFile) {
-        if (metricFile.contentHash === contentHash) {
+    if (reference) {
+        if (reference.contentHash === contentHash) {
             return res.send({
                 success: true,
                 message: 'already created'
@@ -37,7 +37,7 @@ export async function saveMetric(req: Request, res: Response) {
     }
 
     const filename = await saveFile(rawContent, extension)
-    const model = await MetricFile.create({
+    const model = await CodeReference.create({
         contentHash,
         extension,
         filename,

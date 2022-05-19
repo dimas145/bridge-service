@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { MetricFile } from '../../Model/MetricFile'
+import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
 import axios from 'axios'
 
@@ -37,8 +37,8 @@ export async function simulateAll(req: Request, res: Response) {
         }
     }
 
-    // mock gitlab webhook (assume already call save metric)
-    MetricFile.find({ repository }).then((references) => {
+    // mock gitlab webhook (assume already call save reference)
+    CodeReference.find({ repository }).then((references) => {
         console.log('references')
         console.log(references)
         // await axios.post(graderUrl, { // TODO

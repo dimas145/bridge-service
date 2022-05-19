@@ -6,7 +6,7 @@ import { Webhook as WebhookType } from '../../Type/Webhook'
 import { Student } from '../../Model/Student'
 import { Repository } from '../../Model/Repository'
 import { getFile } from '../../Utils/file'
-import { MetricFile } from '../../Model/MetricFile'
+import { CodeReference } from '../../Model/CodeReference'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
 
 export async function Webhook(req: Request, res: Response) {
@@ -50,13 +50,13 @@ export async function Webhook(req: Request, res: Response) {
 
     const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
     if (!repository) {
-        return // no metric file or repo
+        return // no reference file or repo
     }
 
-    const metricFile = await MetricFile.findOne({ repository })
+    const reference = await CodeReference.findOne({ repository })
 
-    if (!metricFile) {
-        return // no metric file or repo
+    if (!reference) {
+        return // no reference file or repo
     }
 
     if (new Date() > repository.dueDate) { // ignore late submission
@@ -78,8 +78,8 @@ export async function Webhook(req: Request, res: Response) {
         activityId,
     }
 
-    if (metricFile.extension == 'json') {
-        const rawContent = await getFile(metricFile.filename)
+    if (reference.extension == 'json') {
+        const rawContent = await getFile(reference.filename)
         data = {
             ...data,
             ...JSON.parse(rawContent.toString())
@@ -87,7 +87,7 @@ export async function Webhook(req: Request, res: Response) {
     } else {
         data = {
             ...data,
-            ...metricFile
+            ...reference
         }
     }
 

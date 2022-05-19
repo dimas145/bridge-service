@@ -1,9 +1,9 @@
 import express from 'express'
-import { saveMetric } from '../Controller/Moodle/saveMetric'
+import { saveReference } from '../Controller/Moodle/saveReference'
 import { RequestWrapper } from '../Utils/requestWrapper'
 
 const moodleRoute = express.Router()
 
-moodleRoute.post('/saveMetric/:courseId/:activityId', RequestWrapper(saveMetric))
+moodleRoute.post('/saveReference/:courseId/:activityId', RequestWrapper(saveReference))
 
 export { moodleRoute }
