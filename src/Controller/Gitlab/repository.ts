@@ -3,7 +3,6 @@ import { Projects, ProjectHooks } from '@gitbeaker/node'
 import { Repository } from '../../Model/Repository'
 
 export async function createRepository(req: Request, res: Response) {
-
     console.log(`hit ${new Date()} - create repository`)
 
     const { name, courseId, activityId, instance, gradingMethod, dueDate } = req.body

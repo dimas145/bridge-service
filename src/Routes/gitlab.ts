@@ -19,8 +19,7 @@ function (_: any, __: any, profile: any, cb: any) {
 }
 ))
 
-
-gitlabRoute.get('/auth', (req ,res,next) => {
+gitlabRoute.get('/auth', (req, res, next) => {
     const { userId } = req.query
     const state = userId
         ? JSON.stringify({ userId })

@@ -7,5 +7,4 @@ export class Constant {
 
     public static UPDATE_GRADE_SOURCE: string = 'Merge Request Hook'
     public static UPDATE_GRADE_COMPONENT: string = 'mod_assign'
-
 }

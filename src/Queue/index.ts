@@ -32,6 +32,5 @@ export class Queue {
         await this.connection.assertQueue(queueName, { durable: false })
         this.connection.sendToQueue(queueName, Buffer.from(message))
         console.log(`message: ${message} is sent`)
-
     }
 }
