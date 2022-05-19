@@ -37,25 +37,18 @@ export async function simulateAll(req: Request, res: Response) {
         }
     }
 
-    // mock save metric (source code reference)
-    axios.post(process.env.SERVICE_BRIDGE_URL + `/moodle/saveMetric/${courseId}/${activityId}`, {
-        contentHash: contentHashRef,
-        extension: extensionRef,
-        rawContent: rawContentRef,
-    }).then(() => {
-        // mock gitlab webhook
-        MetricFile.find({ repository }).then((references) => {
-            console.log('references')
-            console.log(references)
-            // await axios.post(graderUrl, { // TODO
-            //     id: 1,
-            //     name: 'Test',
-            //     references: references,
-            //     contentHash: contentHashSrc,
-            //     extension: extensionSrc,
-            //     rawContent: rawContentSrc,
-            // })
-        })
+    // mock gitlab webhook (assume already call save metric)
+    MetricFile.find({ repository }).then((references) => {
+        console.log('references')
+        console.log(references)
+        // await axios.post(graderUrl, { // TODO
+        //     id: 1,
+        //     name: 'Test',
+        //     references: references,
+        //     contentHash: contentHashSrc,
+        //     extension: extensionSrc,
+        //     rawContent: rawContentSrc,
+        // })
     })
 
     return res.send('sent')
