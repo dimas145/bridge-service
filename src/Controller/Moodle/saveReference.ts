@@ -19,13 +19,13 @@ export async function saveReference(req: Request, res: Response) {
         activityId: Number(activityId)
     })
 
-    const reference = await CodeReference.findOne({
-        repository
-    })
-
     if (!repository) {
         return res.status(404).send('repository not found')
     }
+
+    const reference = await CodeReference.findOne({
+        contentHash
+    })
 
     if (reference) {
         if (reference.contentHash === contentHash) {
@@ -37,7 +37,7 @@ export async function saveReference(req: Request, res: Response) {
     }
 
     const filename = await saveFile(rawContent, extension)
-    const model = await CodeReference.create({
+    const model = CodeReference.create({
         contentHash,
         extension,
         filename,
