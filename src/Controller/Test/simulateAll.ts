@@ -40,14 +40,9 @@ export async function simulateAll(req: Request, res: Response) {
     // mock gitlab webhook (assume already call save reference)
     CodeReference.find({ repository }).then((references) => {
         axios.post(graderUrl, {
-            id: 1,
-            name: 'Test',
+            id: 1,  // TODO refactor SubmissionHistory
             references: references.map((ref) => ref.content),
             solution: rawContentSolution,
-            projectId: 1,
-            userId: 1,
-            courseId,
-            activityId,
         })
     })
 
