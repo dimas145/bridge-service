@@ -7,9 +7,9 @@ export async function saveReference(req: Request, res: Response) {
 
     const { courseId, activityId } = req.params
 
-    const { contentHash, extension, rawContent } = req.body
+    const { contentHash, extension, filename, rawContent } = req.body
 
-    if (!contentHash || !extension || !rawContent) {
+    if (!contentHash || !extension || !filename || !rawContent) {
         return res.status(400).send('Bad request')
     }
 
@@ -39,6 +39,7 @@ export async function saveReference(req: Request, res: Response) {
     const model = CodeReference.create({
         contentHash,
         extension,
+        filename,
         content: rawContent,
         repository
     })
