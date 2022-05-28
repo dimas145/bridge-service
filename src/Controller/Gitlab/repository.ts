@@ -5,13 +5,13 @@ import { Repository } from '../../Model/Repository'
 export async function createRepository(req: Request, res: Response) {
     console.log(`hit ${new Date()} - create repository`)
 
-    const { name, courseId, activityId, instance, gradingMethod, dueDate } = req.body
+    const { name, courseId, activityId, instance, gradingPriority, dueDate } = req.body
 
     const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
     if (repository) {
         // update
         await Repository.update({ id: repository.id },{
-            gradingMethod,
+            gradingPriority,
             dueDate: new Date(dueDate * 1000)
         })
         return res.status(400).send({ success: false, error: 'already exist' })
@@ -50,7 +50,7 @@ export async function createRepository(req: Request, res: Response) {
             courseId,
             instance,
             gitlabUrl: project.web_url as string,
-            gradingMethod,
+            gradingPriority,
             dueDate: new Date(dueDate * 1000)
         })
 

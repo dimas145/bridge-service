@@ -62,7 +62,7 @@ export async function Webhook(req: Request, res: Response) {
         return
     }
 
-    if (repository.gradingMethod == 'first') {
+    if (repository.gradingPriority == 'first') {
         const [_, count] = await SubmissionHistory.findAndCount({ repository, student })
         if (count > 0) { // not accepting any submission
             return

@@ -1,9 +1,13 @@
-import { Column, Entity, OneToMany } from 'typeorm'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 import { BaseModel } from './Base'
+import { CodeReference } from './CodeReference'
 import { SubmissionHistory } from './SubmissionHistory'
 
 @Entity()
 export class Repository extends BaseModel {
+    @PrimaryGeneratedColumn('increment')
+    id: number
+
     @Column({ type: 'integer', nullable: false })
     activityId: number
 
@@ -17,11 +21,17 @@ export class Repository extends BaseModel {
     gitlabUrl: string
 
     @Column({ default: 'last', enum: ['first', 'last'] })
-    gradingMethod: 'first' | 'last'
+    gradingPriority: 'first' | 'last'
+
+    @Column({ default: 'max', enum: ['max', 'min', 'avg'] })
+    gradingMethod: 'max' | 'min' | 'avg'
 
     @Column({ type: 'timestamp' })
     dueDate: Date
 
     @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.repository)
-    submissionHistory: SubmissionHistory
+    submissionHistory: SubmissionHistory[]
+
+    @OneToMany(() => CodeReference, codeReference => codeReference.repository)
+    codeReference: CodeReference[]
 }

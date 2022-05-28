@@ -26,13 +26,11 @@ export async function saveReference(req: Request, res: Response) {
         contentHash
     })
 
-    if (reference) {
-        if (reference.contentHash === contentHash) {
-            return res.send({
-                success: true,
-                message: 'already created'
-            })
-        }
+    if (reference && reference.contentHash === contentHash) {
+        return res.send({
+            success: true,
+            message: 'already created'
+        })
     }
 
     // const filename = await saveFile(rawContent, extension)
