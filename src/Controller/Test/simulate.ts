@@ -23,7 +23,10 @@ export async function simulateWebhook(req: Request, res: Response) {
     // mock gitlab webhook (assume already call save reference)
     const references = await CodeReference.find({ repository })
     if (references.length == 0) {
-        return res.send('code references doesnt exist in db')
+        return res.send({
+            success: false,
+            message: 'code references doesnt exist in db'
+        })
     } else {
         axios.post(graderUrl, {
             references: references.map((ref) => ref.content),
@@ -32,10 +35,17 @@ export async function simulateWebhook(req: Request, res: Response) {
             console.log(response.data)
         }, (error) => {
             console.log(error)
+
+            return res.send({
+                success: false,
+                message: error
+            })
         })
     }
 
-    return res.send('sent')
+    return res.send({
+        success: true,
+    })
 }
 
 export async function mockCreateRepo(req: Request, res: Response) {
@@ -68,10 +78,17 @@ export async function mockCreateRepo(req: Request, res: Response) {
             await model.save()
         } catch (error) {
             console.error(error)
+
+            return res.send({
+                success: false,
+                message: error
+            })
         }
     }
 
-    return res.send('sent')
+    return res.send({
+        success: true,
+    })
 }
 
 export async function mockWebhook(req: Request, res: Response) {
@@ -104,8 +121,15 @@ export async function mockWebhook(req: Request, res: Response) {
             await model.save()
         } catch (error) {
             console.error(error)
+
+            return res.send({
+                success: false,
+                message: error,
+            })
         }
     }
 
-    return res.send('sent')
+    return res.send({
+        success: true,
+    })
 }
