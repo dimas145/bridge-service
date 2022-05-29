@@ -19,7 +19,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - bridge_service
-    # depends_on:
+    depends_on:
+      - psql
     #   - docker-host
 
   psql:
