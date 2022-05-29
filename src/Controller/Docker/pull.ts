@@ -8,8 +8,12 @@ const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 export async function DockerPull(req: Request, res: Response) {
     const { user, repositoryName, tag } = req.body
 
+    if (!user || !repositoryName) {
+        return res.status(400).send('Bad request')
+    }
+
     let useTag = ''
-    if (tag == '') {
+    if (!tag || tag == '') {
         useTag = 'latest'
     } else {
         useTag = tag
