@@ -7,6 +7,9 @@ export class Autograder extends BaseModel {
     @PrimaryGeneratedColumn('increment')
     id: number
 
+    @Column({ type: 'text', nullable: false })
+    port: string
+
     @Column({ type: 'integer', nullable: false })
     name: number
 
