@@ -36,10 +36,18 @@ export async function DockerPull(req: Request, res: Response) {
                         '5000/tcp': [{ HostPort: '5000' }]
                     },
                     Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
+                    NetworkMode: 'bridge_service',
+                },
+                NetworkingConfig: {
+                    EndpointsConfig: {
+                        'bridge_service': {
+                            Aliases: [dockerPullBody.repositoryName]
+                        }
+                    }
                 }
             }).then(function (container) {
                 console.log(`Running ${repoTag} docker container`)
-                return container.start()
+                return container.start()    // TODO save to db
             }).catch(function (err) {
                 console.error(`Error running ${repoTag} docker container`)
                 console.error(err)
