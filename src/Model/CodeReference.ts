@@ -20,6 +20,6 @@ export class CodeReference extends BaseModel {
     @Column({ type: 'text', nullable: false })
     content: string
 
-    @ManyToOne(() => Repository, repository => repository.id)
+    @ManyToOne(() => Repository, repository => repository.codeReference)
     repository: Repository
 }

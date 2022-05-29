@@ -16,8 +16,8 @@ export async function simulateAll(req: Request, res: Response) {
     const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
     if (repository) {
         // update
-        await Repository.update({ id: repository.id }, {
-            id: repository.id,
+        await Repository.update({ courseId: Number(courseId), activityId: Number(activityId) }, {
+            gradingPriority: 'last',
             dueDate: dueDate
         })
         console.log('Repo already exist, updating')

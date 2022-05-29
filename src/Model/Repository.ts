@@ -1,17 +1,14 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { BaseModel } from './Base'
 import { CodeReference } from './CodeReference'
 import { SubmissionHistory } from './SubmissionHistory'
 
 @Entity()
 export class Repository extends BaseModel {
-    @PrimaryGeneratedColumn('increment')
-    id: number
-
-    @Column({ type: 'integer', nullable: false })
+    @PrimaryColumn({ type: 'integer', nullable: false })
     activityId: number
 
-    @Column({ type: 'integer', nullable: false })
+    @PrimaryColumn({ type: 'integer', nullable: false })
     courseId: number
 
     @Column({ type: 'integer', nullable: false })

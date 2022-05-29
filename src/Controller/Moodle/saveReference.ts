@@ -33,7 +33,6 @@ export async function saveReference(req: Request, res: Response) {
         })
     }
 
-    // const filename = await saveFile(rawContent, extension)
     const model = CodeReference.create({
         contentHash,
         extension,
