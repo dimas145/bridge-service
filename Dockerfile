@@ -1,21 +1,29 @@
-FROM node:12-alpine
+# STAGE BUILD
+FROM node:12-alpine as builder
 
-# Create app directory
-WORKDIR /usr/src/app
+RUN mkdir -p /home/node/app/node_modules
+WORKDIR /home/node/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package.json ./
-COPY yarn.lock ./
+COPY package*.json ./
+RUN npm config set unsafe-perm true
+RUN npm install -g typescript
+RUN npm install -g ts-node
 
-RUN yarn
-# If you are building your code for production
-# RUN npm ci --only=production
-
-# Bundle app source
+RUN npm install
 COPY . .
 
-EXPOSE 8085
-CMD [ "yarn", "dev" ]
+RUN npm run build
 
+# STAGE RUN
+FROM node:12-alpine
+
+RUN mkdir -p /home/node/app/node_modules
+WORKDIR /home/node/app
+COPY package*.json ./
+COPY ormconfig.js ./
+
+RUN npm install --production
+COPY --from=builder /home/node/app/dist ./dist
+
+EXPOSE 8085
+CMD [ "npm", "start" ]
