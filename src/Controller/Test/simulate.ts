@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
 import axios from 'axios'
+import { Autograder } from 'src/Model/Autograder'
 
 export async function simulateWebhook(req: Request, res: Response) {
     console.log('Simulating...')
@@ -15,10 +16,25 @@ export async function simulateWebhook(req: Request, res: Response) {
      * 5. Call this API using POST request to {url}/test/simulateWebhook
      */
 
-    const { courseId, activityId, graderUrl, rawContentSolution } = req.body
+    const { courseId, activityId, graderName, rawContentSolution } = req.body
 
     const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
     const repository = await Repository.findOne(repositoryId)
+    const grader = await Autograder.findOne({ name: graderName })
+
+    if (!repository) {
+        return res.send({
+            success: false,
+            message: 'repository doesn\'t exist, create first using /test/mockCreateRepo API'
+        })
+    }
+
+    if (!grader) {
+        return res.send({
+            success: false,
+            message: 'autograder doesn\'t exist, pull first using /docker/pull API'
+        })
+    }
 
     // mock gitlab webhook (assume already call save reference)
     const references = await CodeReference.find({ repository })
@@ -28,6 +44,7 @@ export async function simulateWebhook(req: Request, res: Response) {
             message: 'code references doesnt exist in db'
         })
     } else {
+        const graderUrl = `http://${graderName}:${grader.port}/grade`
         axios.post(graderUrl, {
             references: references.map((ref) => ref.content),
             solution: rawContentSolution,
