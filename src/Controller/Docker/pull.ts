@@ -6,7 +6,7 @@ import { Autograder } from '../../Model/Autograder'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function DockerPull(req: Request, res: Response) {
-    const { user, repositoryName, graderPort, tag } = req.body
+    const { user, repositoryName, graderPort, tag, description } = req.body
 
     if (!user || !repositoryName || !graderPort) {
         return res.status(400).send('Bad request')
@@ -54,8 +54,21 @@ export async function DockerPull(req: Request, res: Response) {
                     }
                 }
             }).then(function (container) {
-                console.log(`Running ${repoTag} docker container`)
-                return container.start()    // TODO save to db
+                console.log(`Running ${repoTag} docker container with container id: ${container.id}`)
+                container.start().then(() => {
+                    const model = Autograder.create({
+                        containerId: container.id,
+                        port,
+                        name: repositoryName,
+                        description,
+                        status: 'Running'
+                    })
+                    model.save().then(() => {
+                        // save success => do nothing
+                    }, (error) => {
+                        console.log(error)
+                    })
+                })
             }).catch(function (err) {
                 console.error(`Error running ${repoTag} docker container`)
                 console.error(err)
@@ -67,3 +80,27 @@ export async function DockerPull(req: Request, res: Response) {
         success: true
     })
 }
+
+// handle exit service, stop and remove all running autograder container
+async function exitHandler(eventType: any) {
+    console.log('clean up before exiting')
+    if (eventType || eventType === 0) {
+        try {
+            // clean up autograder table
+            const allAutograder = await Autograder.find()
+            await Autograder.remove(allAutograder)
+            allAutograder.forEach(async (autograder) => {
+                await docker.getContainer(autograder.containerId).kill({ force: true })
+            })
+            console.log('clean up done')
+        } catch (err) {
+            console.error(err)
+        }
+
+        console.log(`process exit with eventType: ${eventType}`)
+    }
+}
+
+['exit', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'uncaughtException', 'SIGTERM'].forEach((eventType) => {
+    process.on(eventType, exitHandler.bind(null, eventType))
+})

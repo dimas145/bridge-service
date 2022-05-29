@@ -9,13 +9,10 @@ export async function simulateWebhook(req: Request, res: Response) {
     /**
      * How to use:
      * 1. Run using docker compose
-     * 2. Pull grader image using POST request to {url}/docker/pull, will build container and run automatically, make sure the container run properly // currently only support for port 5000
+     * 2. Pull grader image using POST request to {url}/docker/pull, will build container and run automatically, make sure the container run properly (docker ps)
      * 3. Call mockCreateRepo using POST request to {url}/test/mockCreateRepo
      * 4. Save code reference using POST request to {url}/moodle/saveReference
      * 5. Call this API using POST request to {url}/test/simulateWebhook
-     *
-     *
-     * NOTE: need to manually stop container
      */
 
     const { courseId, activityId, graderUrl, rawContentSolution } = req.body
