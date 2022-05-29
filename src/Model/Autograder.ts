@@ -1,11 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
+import { Column, Entity, PrimaryColumn, OneToMany } from 'typeorm'
 import { BaseModel } from './Base'
 import { SubmissionHistory } from './SubmissionHistory'
 
 @Entity()
 export class Autograder extends BaseModel {
-    @PrimaryGeneratedColumn('increment')
-    id: number
+    @PrimaryColumn({ type: 'text', nullable: false })
+    containerId: string
 
     @Column({ type: 'integer', nullable: false })
     port: number
