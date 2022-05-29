@@ -7,10 +7,11 @@ export async function createRepository(req: Request, res: Response) {
 
     const { name, courseId, activityId, instance, gradingPriority, dueDate } = req.body
 
-    const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
+    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repository = await Repository.findOne(repositoryId)
     if (repository) {
         // update
-        await Repository.update({ courseId: Number(courseId), activityId: Number(activityId) }, {
+        await Repository.update(repositoryId, {
             gradingPriority,
             dueDate: new Date(dueDate * 1000)
         })

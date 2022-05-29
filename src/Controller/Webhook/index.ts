@@ -47,7 +47,8 @@ export async function Webhook(req: Request, res: Response) {
         return // no need to process user that hasn't register
     }
 
-    const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
+    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repository = await Repository.findOne(repositoryId)
     if (!repository) {
         return // no reference file or repo
     }

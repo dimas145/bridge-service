@@ -13,10 +13,11 @@ export async function simulateAll(req: Request, res: Response) {
     const dueDate: Date = new Date()
     dueDate.setDate(dueDate.getDate() + 1) // add 1 day
 
-    const repository = await Repository.findOne({ courseId: Number(courseId), activityId: Number(activityId) })
+    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repository = await Repository.findOne(repositoryId)
     if (repository) {
         // update
-        await Repository.update({ courseId: Number(courseId), activityId: Number(activityId) }, {
+        await Repository.update(repositoryId, {
             gradingPriority: 'last',
             dueDate: dueDate
         })
