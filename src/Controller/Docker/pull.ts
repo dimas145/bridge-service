@@ -54,7 +54,7 @@ export async function DockerPull(req: Request, res: Response) {
                     }
                 }
             }).then(function (container) {
-                console.log(`Running ${repoTag} docker container with container id: ${container.id}`)
+                console.log(`Running ${repoTag} docker container with container id: ${container.id} on port ${port}`)
                 container.start().then(() => {
                     const model = Autograder.create({
                         containerId: container.id,
@@ -88,10 +88,15 @@ async function exitHandler(eventType: any) {
         try {
             // clean up autograder table
             const allAutograder = await Autograder.find()
-            await Autograder.remove(allAutograder)
             allAutograder.forEach(async (autograder) => {
-                await docker.getContainer(autograder.containerId).kill({ force: true })
+                try {
+                    await docker.getContainer(autograder.containerId).kill({ force: true })
+                } catch (err) {
+                    console.error(`error killing container with id ${autograder.containerId}`)
+                    console.error(err)
+                }
             })
+            await Autograder.remove(allAutograder)
             console.log('clean up done')
         } catch (err) {
             console.error(err)
