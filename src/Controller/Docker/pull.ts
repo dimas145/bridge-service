@@ -6,9 +6,9 @@ import { Autograder } from '../../Model/Autograder'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function DockerPull(req: Request, res: Response) {
-    const { user, repositoryName, tag } = req.body
+    const { user, repositoryName, graderPort, tag } = req.body
 
-    if (!user || !repositoryName) {
+    if (!user || !repositoryName || !graderPort) {
         return res.status(400).send('Bad request')
     }
 
@@ -20,6 +20,9 @@ export async function DockerPull(req: Request, res: Response) {
     }
     const repoTag = user + '/' + repositoryName + ':' + useTag
 
+    const [_, count] = await Autograder.findAndCount()
+    const port = Number(process.env.GRADER_STARTING_PORT) + count // assign port ascending from grader starting port
+
     console.log(`Pulling ${repoTag} docker image...`)
     docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
         if (err) console.error(err)
@@ -30,14 +33,15 @@ export async function DockerPull(req: Request, res: Response) {
                 console.error(err)
             console.log(`Pull ${repoTag} docker image done`)
 
+            const finalPort = String(graderPort) + '/tcp'
             docker.createContainer({
                 Image: repoTag,
                 ExposedPorts: {
-                    '5000/tcp': {}
+                    [finalPort]: {}
                 },
                 HostConfig: {
                     PortBindings: {
-                        '5000/tcp': [{ HostPort: '5000' }]
+                        [finalPort]: [{ HostPort: String(port) }]
                     },
                     Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
                     NetworkMode: 'bridge_service',
@@ -59,5 +63,7 @@ export async function DockerPull(req: Request, res: Response) {
         }
     })
 
-    res.send('received')
+    return res.send({
+        success: true
+    })
 }
