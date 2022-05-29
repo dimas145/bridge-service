@@ -1,20 +1,20 @@
 import { Request, Response } from 'express'
 import { IncomingMessage } from 'http'
-import { Docker as DockerType } from '../../Type/Docker'
 import Docker from 'dockerode'
+import { Autograder } from 'src/Model/Autograder'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function DockerPull(req: Request, res: Response) {
-    const dockerPullBody: DockerType.Pull = req.body
+    const { user, repositoryName, tag } = req.body
 
-    let tag = ''
-    if (dockerPullBody.tag == '') {
-        tag = 'latest'
+    let useTag = ''
+    if (tag == '') {
+        useTag = 'latest'
     } else {
-        tag = dockerPullBody.tag
+        useTag = tag
     }
-    const repoTag = dockerPullBody.user + '/' + dockerPullBody.repositoryName + ':' + tag
+    const repoTag = user + '/' + repositoryName + ':' + useTag
 
     console.log(`Pulling ${repoTag} docker image...`)
     docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
@@ -41,7 +41,7 @@ export async function DockerPull(req: Request, res: Response) {
                 NetworkingConfig: {
                     EndpointsConfig: {
                         'bridge_service': {
-                            Aliases: [dockerPullBody.repositoryName]
+                            Aliases: [repositoryName]
                         }
                     }
                 }
