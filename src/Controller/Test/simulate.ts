@@ -18,6 +18,10 @@ export async function simulateWebhook(req: Request, res: Response) {
 
     const { courseId, activityId, graderName, rawContentSolution } = req.body
 
+    if (!courseId || !activityId || !graderName || !rawContentSolution) {
+        return res.status(400).send('Bad request')
+    }
+
     const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
     const repository = await Repository.findOne(repositoryId)
     const grader = await Autograder.findOne({ name: graderName })
@@ -68,6 +72,10 @@ export async function simulateWebhook(req: Request, res: Response) {
 export async function mockCreateRepo(req: Request, res: Response) {
     const { courseId, activityId } = req.body
 
+    if (!courseId || !activityId) {
+        return res.status(400).send('Bad request')
+    }
+
     // mock create repo
     const instance: number = 1
     const dueDate: Date = new Date()
@@ -110,6 +118,10 @@ export async function mockCreateRepo(req: Request, res: Response) {
 
 export async function mockWebhook(req: Request, res: Response) {
     const { courseId, activityId } = req.body
+
+    if (!courseId || !activityId) {
+        return res.status(400).send('Bad request')
+    }
 
     // mock create repo
     const instance: number = 1
