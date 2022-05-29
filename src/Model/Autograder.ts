@@ -10,8 +10,8 @@ export class Autograder extends BaseModel {
     @Column({ type: 'integer', nullable: false })
     port: number
 
-    @Column({ type: 'integer', nullable: false })
-    name: number
+    @Column({ type: 'text', nullable: false })
+    name: string
 
     @Column({ type: 'text', nullable: true })
     description: string
