@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { IncomingMessage } from 'http'
 import Docker from 'dockerode'
-import { Autograder } from 'src/Model/Autograder'
+import { Autograder } from '../../Model/Autograder'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
