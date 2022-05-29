@@ -6,7 +6,6 @@ import Docker from 'dockerode'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function DockerPull(req: Request, res: Response) {
-    console.log(req.body)
     const dockerPullBody: DockerType.Pull = req.body
 
     let tag = ''
@@ -15,30 +14,34 @@ export async function DockerPull(req: Request, res: Response) {
     } else {
         tag = dockerPullBody.tag
     }
-    const repoTag = dockerPullBody.user + '/' + dockerPullBody.repositoryName+ ':' + tag
+    const repoTag = dockerPullBody.user + '/' + dockerPullBody.repositoryName + ':' + tag
 
-    docker.pull(repoTag, function (err: any, stream: IncomingMessage) {
+    console.log(`Pulling ${repoTag} docker image...`)
+    docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
         if (err) console.error(err)
         docker.modem.followProgress(stream, onFinished)
 
-        function onFinished(err: any, output: any) {
-            if (err) console.error(err)
-            console.log('Pull docker image done')
-            console.log(output)
+        function onFinished(err: any, _: any) {
+            if (err)
+                console.error(err)
+            console.log(`Pull ${repoTag} docker image done`)
 
             docker.createContainer({
                 Image: repoTag,
                 ExposedPorts: {
-                    '8080/tcp': {}
+                    '5000/tcp': {}
                 },
                 HostConfig: {
                     PortBindings: {
-                        '8080/tcp': [{ HostPort: '8080' }]
-                    }
+                        '5000/tcp': [{ HostPort: '5000' }]
+                    },
+                    Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
                 }
             }).then(function (container) {
+                console.log(`Running ${repoTag} docker container`)
                 return container.start()
             }).catch(function (err) {
+                console.error(`Error running ${repoTag} docker container`)
                 console.error(err)
             })
         }

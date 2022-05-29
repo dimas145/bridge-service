@@ -6,7 +6,18 @@ import axios from 'axios'
 export async function simulateAll(req: Request, res: Response) {
     console.log('Simulating...')
 
-    const { courseId, activityId, graderUrl, rawContentSolution } = req.body
+    /**
+     * How to use:
+     * 1. Run using docker compose
+     * 2. Pull grader image using {url}/docker/pull, will build container and run automatically // currently only support for port 5000
+     * 3. Save code reference using {url}/moodle/saveReference/{courseId}/{activityId}
+     * 4. Call this API and make sure using the same courseId and activityId
+     *
+     *
+     * NOTE: need to manually stop container
+     */
+
+    const { courseId, activityId, rawContentSolution } = req.body
 
     // mock create repo
     const instance: number = 1
@@ -39,9 +50,9 @@ export async function simulateAll(req: Request, res: Response) {
     }
 
     // mock gitlab webhook (assume already call save reference)
+    const graderUrl: string = 'http://localhost:5000/grade'
     CodeReference.find({ repository }).then((references) => {
         axios.post(graderUrl, {
-            id: 1,  // TODO refactor SubmissionHistory
             references: references.map((ref) => ref.content),
             solution: rawContentSolution,
         })
