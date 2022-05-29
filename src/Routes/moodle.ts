@@ -4,6 +4,6 @@ import { RequestWrapper } from '../Utils/requestWrapper'
 
 const moodleRoute = express.Router()
 
-moodleRoute.post('/saveReference/:courseId/:activityId', RequestWrapper(saveReference))
+moodleRoute.post('/saveReference', RequestWrapper(saveReference))
 
 export { moodleRoute }
