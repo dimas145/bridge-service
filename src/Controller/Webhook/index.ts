@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'
 import { Repositories } from '@gitbeaker/node'
-import { Queue } from '../../Queue'
 import { Constant } from '../../constant'
 import { Webhook as WebhookType } from '../../Type/Webhook'
 import { Student } from '../../Model/Student'
@@ -25,19 +24,22 @@ export async function Webhook(req: Request, res: Response) {
     })
 
     /**
-    * Send to queue:
-    * - tar.gz data
-    * - student user data
-    * - tescases
+    * Send to grader:
+    * - references code in base64
+    * - referencesFileNames
+    * - solution code in base64
+    * - solutionFileName
+    * - timeLimit
+    * - gradingMethod
     */
 
     const projectId = webhookBody.object_attributes.source.id
-    let targzSourceCode: any
+    let targzSourceCode: any    // todo
     try {
         targzSourceCode = await repoService.showArchive(projectId, { fileType: 'tar.gz' })
     } catch (e) {
-        console.log('error get student source code', projectId)
-        console.log(e)
+        console.error('error get student source code', projectId)
+        console.error(e)
         return
     }
     const targzBase64 = Buffer.from(targzSourceCode).toString('base64')
@@ -53,7 +55,7 @@ export async function Webhook(req: Request, res: Response) {
         return // no reference file or repo
     }
 
-    const reference = await CodeReference.findOne({ repository })
+    const reference = await CodeReference.find({ repository })
 
     if (!reference) {
         return // no reference file or repo
@@ -83,6 +85,6 @@ export async function Webhook(req: Request, res: Response) {
         ...reference
     }
 
-    await Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
+    // await Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
     // return res.send('received')
 }

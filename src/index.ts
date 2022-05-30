@@ -2,15 +2,9 @@ import dotenv from 'dotenv'
 dotenv.config()
 import { createConnection } from 'typeorm'
 import app from './app'
-import { Queue } from './Queue/'
 
 const main = async () => {
     const PORT = process.env.PORT || 8085
-
-    await Queue.init({
-        url: process.env.QUEUE_URL as string
-    })
-    console.log('success connect to rabbitmq')
 
     try {
         const connection = await createConnection()
