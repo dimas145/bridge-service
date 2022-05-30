@@ -20,9 +20,6 @@ export async function DockerPull(req: Request, res: Response) {
     }
     const repoTag = user + '/' + repositoryName + ':' + useTag
 
-    const [_, count] = await Autograder.findAndCount()
-    const port = Number(process.env.GRADER_STARTING_PORT) + count // assign port ascending from grader starting port
-
     console.log(`Pulling ${repoTag} docker image...`)
     docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
         if (err) console.error(err)
@@ -40,9 +37,6 @@ export async function DockerPull(req: Request, res: Response) {
                     [finalPort]: {}
                 },
                 HostConfig: {
-                    PortBindings: {
-                        [finalPort]: [{ HostPort: String(port) }]
-                    },
                     Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
                     NetworkMode: 'bridge_service',
                 },
@@ -54,11 +48,11 @@ export async function DockerPull(req: Request, res: Response) {
                     }
                 }
             }).then(function (container) {
-                console.log(`Running ${repoTag} docker container with container id: ${container.id} on port ${port}`)
+                console.log(`Running ${repoTag} docker container with container id: ${container.id}`)
                 container.start().then(() => {
                     const model = Autograder.create({
                         containerId: container.id,
-                        port,
+                        port: graderPort,
                         name: repositoryName,
                         description,
                         status: 'Running'

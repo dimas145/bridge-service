@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
+import { Autograder } from '../../Model/Autograder'
 import axios from 'axios'
-import { Autograder } from 'src/Model/Autograder'
 
 export async function simulateWebhook(req: Request, res: Response) {
     console.log('Simulating...')
@@ -49,24 +49,21 @@ export async function simulateWebhook(req: Request, res: Response) {
         })
     } else {
         const graderUrl = `http://${graderName}:${grader.port}/grade`
-        axios.post(graderUrl, {
-            references: references.map((ref) => ref.content),
-            solution: rawContentSolution,
-        }).then((response) => {
-            console.log(response.data)
-        }, (error) => {
+        try {
+            const response = await axios.post(graderUrl, {
+                references: references.map((ref) => ref.content),
+                solution: rawContentSolution,
+            })
+            return res.send(response.data)
+        } catch (error) {
             console.log(error)
 
             return res.send({
                 success: false,
                 message: error
             })
-        })
+        }
     }
-
-    return res.send({
-        success: true,
-    })
 }
 
 export async function mockCreateRepo(req: Request, res: Response) {
