@@ -16,9 +16,9 @@ export async function simulateWebhook(req: Request, res: Response) {
      * 5. Call this API using POST request to {url}/test/simulateWebhook
      */
 
-    const { courseId, activityId, graderName, rawContentSolution } = req.body
+    const { courseId, activityId, graderName, rawContentSolution, solutionFileName } = req.body
 
-    if (!courseId || !activityId || !graderName || !rawContentSolution) {
+    if (!courseId || !activityId || !graderName || !rawContentSolution || !solutionFileName) {
         return res.status(400).send('Bad request')
     }
 
@@ -52,7 +52,10 @@ export async function simulateWebhook(req: Request, res: Response) {
         try {
             const response = await axios.post(graderUrl, {
                 references: references.map((ref) => ref.content),
+                referencesFileNames: references.map((ref) => `${ref.filename}.${ref.extension}`),
                 solution: rawContentSolution,
+                solutionFileName,
+                timeLimit: 5000
             })
             return res.send(response.data)
         } catch (error) {
