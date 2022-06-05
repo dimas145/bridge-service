@@ -50,7 +50,20 @@ export async function createRepository(req: Request, res: Response) {
             }
         )
 
-        const graders = autograders.map(async (grader: string) => await Autograder.findOne({ name: grader }))
+        const graders: Autograder[] = []
+        for (let i = 0; i < autograders.length; i++) {
+            let grader: Autograder
+            try {
+                grader = await Autograder.findOneOrFail({ name: autograders[i] })
+            } catch (error) {
+                console.log(error)
+                return res.status(400).send({
+                    success: false,
+                    message: `autograder ${autograders[i]} doesn't exist`
+                })
+            }
+            graders.push(grader)
+        }
 
         const model = Repository.create({
             activityId,

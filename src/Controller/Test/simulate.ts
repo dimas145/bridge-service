@@ -70,7 +70,7 @@ export async function simulateWebhook(req: Request, res: Response) {
 }
 
 export async function mockCreateRepo(req: Request, res: Response) {
-    const { courseId, activityId } = req.body
+    const { courseId, activityId, autograders } = req.body
 
     if (!courseId || !activityId) {
         return res.status(400).send('Bad request')
@@ -83,6 +83,22 @@ export async function mockCreateRepo(req: Request, res: Response) {
 
     const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
     const repository = await Repository.findOne(repositoryId)
+
+    const graders: Autograder[] = []
+    for (let i = 0; i < autograders.length; i++) {
+        let grader: Autograder
+        try {
+            grader = await Autograder.findOneOrFail({ name: autograders[i] })
+        } catch (error) {
+            console.log(error)
+            return res.status(400).send({
+                success: false,
+                message: `autograder ${autograders[i]} doesn't exist`
+            })
+        }
+        graders.push(grader)
+    }
+
     if (repository) {
         // update
         await Repository.update(repositoryId, {
@@ -95,8 +111,10 @@ export async function mockCreateRepo(req: Request, res: Response) {
             activityId,
             courseId,
             instance,
+            timeLimit: 3000,
             gitlabUrl: 'dummy',
-            dueDate: dueDate
+            dueDate: dueDate,
+            graders
         })
 
         try {
@@ -107,53 +125,6 @@ export async function mockCreateRepo(req: Request, res: Response) {
             return res.send({
                 success: false,
                 message: error
-            })
-        }
-    }
-
-    return res.send({
-        success: true,
-    })
-}
-
-export async function mockWebhook(req: Request, res: Response) {
-    const { courseId, activityId } = req.body
-
-    if (!courseId || !activityId) {
-        return res.status(400).send('Bad request')
-    }
-
-    // mock create repo
-    const instance: number = 1
-    const dueDate: Date = new Date()
-    dueDate.setDate(dueDate.getDate() + 1) // add 1 day
-
-    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
-    const repository = await Repository.findOne(repositoryId)
-    if (repository) {
-        // update
-        await Repository.update(repositoryId, {
-            gradingPriority: 'last',
-            dueDate: dueDate
-        })
-        console.log('Repo already exist, updating')
-    } else {
-        const model = Repository.create({
-            activityId,
-            courseId,
-            instance,
-            gitlabUrl: 'dummy',
-            dueDate: dueDate
-        })
-
-        try {
-            await model.save()
-        } catch (error) {
-            console.error(error)
-
-            return res.send({
-                success: false,
-                message: error,
             })
         }
     }
