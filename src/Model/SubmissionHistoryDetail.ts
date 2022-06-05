@@ -5,7 +5,7 @@ import { Repository } from './Repository'
 import { Student } from './Student'
 
 @Entity()
-export class SubmissionHistory extends BaseModel {
+export class SubmissionHistoryDetail extends BaseModel {
     @PrimaryColumn()
     repositoryActivityId: number
 
@@ -13,13 +13,16 @@ export class SubmissionHistory extends BaseModel {
     repositoryCourseId: number
 
     @PrimaryColumn()
+    codeReferenceId: number
+
+    @PrimaryColumn()
     studentUserId: number
 
     @PrimaryColumn()
     autograderContainerId: number
 
-    @Column({ type: 'integer', nullable: false })
-    grade: number
+    @Column({ type: 'text', nullable: true })
+    detail: string
 
     @ManyToOne(() => Repository, repository => repository.submissionHistory)
     repository: Repository
