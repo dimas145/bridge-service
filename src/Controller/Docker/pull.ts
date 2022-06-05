@@ -58,7 +58,7 @@ export async function DockerPull(req: Request, res: Response) {
                         status: 'Running'
                     })
                     model.save().then(() => {
-                        // save success => do nothing
+                        console.log(`Run ${repoTag} docker container success`)
                     }, (error) => {
                         console.log(error)
                     })
