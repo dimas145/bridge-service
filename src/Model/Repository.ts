@@ -17,6 +17,9 @@ export class Repository extends BaseModel {
     @Column({ type: 'text', nullable: false })
     gitlabUrl: string
 
+    @Column({ type: 'integer', nullable: false })
+    timeLimit: number
+
     @Column({ default: 'last', enum: ['first', 'last'] })
     gradingPriority: 'first' | 'last'
 
