@@ -7,7 +7,7 @@ import { RequestWrapper } from '../Utils/requestWrapper'
 
 const gitlabRoute = express.Router()
 
-gitlabRoute.post('/createRepository/', RequestWrapper(createRepository))
+gitlabRoute.post('/createRepository', RequestWrapper(createRepository))
 
 passport.use(new GitLabStrategy({
     clientID: process.env.GITLAB_APP_ID as string,

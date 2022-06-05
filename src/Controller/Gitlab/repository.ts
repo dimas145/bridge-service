@@ -34,7 +34,7 @@ export async function createRepository(req: Request, res: Response) {
             visibility: 'public',
             merge_requests_access_level: 'enabled',
             issues_access_level: 'enabled',
-            initialize_with_readme: true
+            initialize_with_readme: false
         })
 
         await projectHookService.add(
@@ -63,10 +63,13 @@ export async function createRepository(req: Request, res: Response) {
         }
 
         return res.send({
-            success: true, gitlabUrl: project.web_url
+            success: true,
+            gitlabUrl: project.web_url
         })
     } catch (error) {
-        return res.status(400).send({ success: false, error: error.message })
+        return res.status(400).send({
+            success: false,
+            error: error.message
+        })
     }
-
 }
