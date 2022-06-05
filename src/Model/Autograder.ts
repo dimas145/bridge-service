@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryColumn, OneToMany } from 'typeorm'
+import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
 import { BaseModel } from './Base'
+import { Repository } from './Repository'
 import { SubmissionHistory } from './SubmissionHistory'
 
 @Entity()
@@ -21,4 +22,7 @@ export class Autograder extends BaseModel {
 
     @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.autograder)
     submissionHistory: SubmissionHistory[]
+
+    @ManyToMany(() => Repository, repository => repository.graders)
+    repository: Repository[]
 }

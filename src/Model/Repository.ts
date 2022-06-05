@@ -1,4 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm'
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 'typeorm'
+import { Autograder } from './Autograder'
 import { BaseModel } from './Base'
 import { CodeReference } from './CodeReference'
 import { SubmissionHistory } from './SubmissionHistory'
@@ -34,4 +35,8 @@ export class Repository extends BaseModel {
 
     @OneToMany(() => CodeReference, codeReference => codeReference.repository)
     codeReference: CodeReference[]
+
+    @ManyToMany(() => Autograder, autograder => autograder.repository)
+    @JoinTable()
+    graders: Autograder[]
 }
