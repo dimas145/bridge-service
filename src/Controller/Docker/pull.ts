@@ -84,13 +84,14 @@ async function exitHandler(eventType: any) {
             const allAutograder = await Autograder.find()
             allAutograder.forEach(async (autograder) => {
                 try {
+                    autograder.status = 'Stopped'
                     await docker.getContainer(autograder.containerId).kill({ force: true })
                 } catch (err) {
                     console.error(`error killing container with id ${autograder.containerId}`)
                     console.error(err)
                 }
             })
-            await Autograder.remove(allAutograder)
+            await Autograder.save(allAutograder)
             console.log('clean up done')
         } catch (err) {
             console.error(err)
