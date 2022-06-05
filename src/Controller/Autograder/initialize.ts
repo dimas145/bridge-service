@@ -5,7 +5,7 @@ import { Autograder } from '../../Model/Autograder'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
-export async function DockerPull(req: Request, res: Response) {
+export async function InitializeAutograder(req: Request, res: Response) {
     const { user, repositoryName, graderPort, tag, description } = req.body
 
     if (!user || !repositoryName || !graderPort) {

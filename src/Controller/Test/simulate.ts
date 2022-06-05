@@ -133,3 +133,17 @@ export async function mockCreateRepo(req: Request, res: Response) {
         success: true,
     })
 }
+
+export async function test(req: Request, res: Response) {
+    const { courseId, activityId } = req.body
+
+    const repo = await Repository.findOneOrFail({
+        relations: ['graders'],
+        where: { courseId, activityId }
+    })
+    return res.send({
+        success: true,
+        data: repo,
+        data2: repo.graders
+    })
+}

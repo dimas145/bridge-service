@@ -1,12 +1,12 @@
 import express from 'express'
-import { gitlabRoute } from './Routes/gitlab'
 import { testRoute } from './Routes/testRoutes'
+import { gitlabRoute } from './Routes/gitlab'
+import { moodleRoute } from './Routes/moodle'
 import { webhookRoute } from './Routes/webhook'
+import { autograderRoute } from './Routes/autograder'
 import passport from 'passport'
 import cors from 'cors'
-import { moodleRoute } from './Routes/moodle'
 import path from 'path'
-import { dockerRoute } from './Routes/dockerRoutes'
 
 const app = express()
 
@@ -38,6 +38,6 @@ app.use('/test', testRoute)
 app.use('/webhook', webhookRoute)
 app.use('/gitlab', gitlabRoute)
 app.use('/moodle', moodleRoute)
-app.use('/docker', dockerRoute)
+app.use('/autograder', autograderRoute)
 
 export default app
