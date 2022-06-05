@@ -6,6 +6,8 @@ import { Student } from '../../Model/Student'
 import { Repository } from '../../Model/Repository'
 import { CodeReference } from '../../Model/CodeReference'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
+import { SubmissionHistoryDetail } from '../../Model/SubmissionHistoryDetail'
+import axios from 'axios'
 
 export async function Webhook(req: Request, res: Response) {
     res.send('received') // just to give 200 to gitlab
@@ -30,7 +32,10 @@ export async function Webhook(req: Request, res: Response) {
     }
 
     const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
-    const repository = await Repository.findOne(repositoryId)
+    const repository = await Repository.findOne({
+        relations: ['graders'],
+        where: repositoryId
+    })
     if (!repository) { // no repo
         return
     }
@@ -90,8 +95,47 @@ export async function Webhook(req: Request, res: Response) {
         gradingMethod: repository.gradingMethod
     }
 
-    console.log(data)
+    for (let i = 0; i < repository.graders.length; i++) {
+        const grader = repository.graders[i]
 
-    // await Queue.sendMessage(Constant.GRADING_QUEUE, JSON.stringify({ data }))
-    // return res.send('received')
+        if (grader.status === 'Running') {
+            const graderUrl = `http://${grader.name}:${grader.port}/grade`
+
+            const submissionHistory = SubmissionHistory.create({
+                repository,
+                student,
+                autograder: grader
+            })
+
+            const submissionHistoryDetail = SubmissionHistoryDetail.create({
+                repository,
+                student,
+                autograder: grader
+            })
+
+            try {
+                const response = await axios.post(graderUrl, data)
+
+                if (!response.data.error) {
+                    const responseData = response.data.data
+                    submissionHistory.grade = responseData.grade
+                    submissionHistory.save()
+
+                    const feedbacks = responseData.feedback
+                    for (let j = 0; j < feedbacks; j++) {
+                        submissionHistoryDetail.codeReferenceId = references[j].id
+                        submissionHistoryDetail.detail = feedbacks[j]
+
+                        submissionHistoryDetail.save()
+                    }
+                } else {
+                    throw new Error(response.data.message)
+                }
+            } catch (error) {
+                console.error(error)
+                submissionHistory.grade = 0
+                await submissionHistory.save()
+            }
+        }
+    }
 }
