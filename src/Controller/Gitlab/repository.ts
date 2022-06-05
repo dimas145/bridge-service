@@ -37,13 +37,14 @@ export async function createRepository(req: Request, res: Response) {
             visibility: 'public',
             merge_requests_access_level: 'enabled',
             issues_access_level: 'enabled',
-            initialize_with_readme: false
+            initialize_with_readme: true
         })
 
         await projectHookService.add(
             Number(project.id),
             process.env.SERVICE_BRIDGE_URL + '/webhook/' + courseId + '/' + activityId,
             {
+                push_events: false,
                 merge_requests_events: true,
                 token: process.env.GITLAB_WEBHOOK_SECRET_TOKEN,
             }
