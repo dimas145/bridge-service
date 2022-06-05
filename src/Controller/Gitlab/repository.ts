@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import { Projects, ProjectHooks } from '@gitbeaker/node'
 import { Repository } from '../../Model/Repository'
+import { Autograder } from '../../Model/Autograder'
 
 export async function createRepository(req: Request, res: Response) {
     console.log(`hit ${new Date()} - create repository`)
 
-    const { name, courseId, activityId, instance, gradingPriority, gradingMethod, timeLimit, dueDate } = req.body
+    const { name, courseId, activityId, instance, gradingPriority, gradingMethod, timeLimit, dueDate, autograders } = req.body
 
     const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
     const repository = await Repository.findOne(repositoryId)
@@ -48,6 +49,8 @@ export async function createRepository(req: Request, res: Response) {
             }
         )
 
+        const graders = autograders.map(async (grader: string) => await Autograder.findOne({ name: grader }))
+
         const model = Repository.create({
             activityId,
             courseId,
@@ -56,7 +59,8 @@ export async function createRepository(req: Request, res: Response) {
             gradingPriority,
             gradingMethod,
             timeLimit,
-            dueDate: new Date(dueDate * 1000)
+            dueDate: new Date(dueDate * 1000),
+            graders
         })
 
         try {
