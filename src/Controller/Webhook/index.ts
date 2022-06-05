@@ -23,36 +23,6 @@ export async function Webhook(req: Request, res: Response) {
         token: process.env.GITLAB_PRIVATE_TOKEN
     })
 
-    /**
-    * Send to grader:
-    * - references code in base64
-    * - referencesFileNames
-    * - solution code in base64
-    * - solutionFileName
-    * - timeLimit
-    * - gradingMethod
-    */
-
-    const projectId = webhookBody.object_attributes.source.id
-    let mrChanges: any
-    let file: any
-    let solutionFileName: string
-    let solution: string
-    try {
-        mrChanges = await gitlabService.MergeRequests.changes(projectId, webhookBody.object_attributes.iid)
-        file = await gitlabService.RepositoryFiles.show(
-            projectId,
-            mrChanges.changes[0].new_path,  // assume only 1 file is changed
-            mrChanges.diff_refs.head_sha
-        )
-
-        solution = file.content
-        solutionFileName = file.file_name
-    } catch (e) {
-        console.error('error get student source code', projectId)
-        console.error(e)
-        return
-    }
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
 
     if (!student) {
@@ -80,6 +50,35 @@ export async function Webhook(req: Request, res: Response) {
         if (count > 0) { // not accepting any submission
             return
         }
+    }
+
+    /**
+    * Send to grader:
+    * - references code in base64
+    * - referencesFileNames
+    * - solution code in base64
+    * - solutionFileName
+    * - timeLimit
+    * - gradingMethod
+    */
+
+    const projectId = webhookBody.object_attributes.source.id
+    let solutionFileName: string
+    let solution: string
+    try {
+        const mrChanges: any = await gitlabService.MergeRequests.changes(projectId, webhookBody.object_attributes.iid)
+        const file: any = await gitlabService.RepositoryFiles.show(
+            projectId,
+            mrChanges.changes[0].new_path,  // assume only 1 file is changed
+            mrChanges.diff_refs.head_sha
+        )
+
+        solution = file.content
+        solutionFileName = file.file_name
+    } catch (e) {
+        console.error('error get student source code', projectId)
+        console.error(e)
+        return
     }
 
     const data = {
