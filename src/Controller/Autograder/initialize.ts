@@ -6,7 +6,7 @@ import Docker from 'dockerode'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
-export async function InitializeAutograder(req: Request, res: Response) {
+export async function Initialize(req: Request, res: Response) {
     const { dockerUser, repositoryName, graderPort, tag, description } = req.body
 
     if (!dockerUser || !repositoryName || !graderPort) {
@@ -21,7 +21,30 @@ export async function InitializeAutograder(req: Request, res: Response) {
     }
     const repoTag = dockerUser + '/' + repositoryName + ':' + useTag
 
+    const grader = await Autograder.findOne({ name: repositoryName })
+    if (grader) {
+        if (grader.status == DockerStatus.RUNNING) {
+            return res.status(400).send({
+                success: false,
+                message: 'Autograder is already exist'
+            })
+        } else if (grader.status == DockerStatus.INITIALIZING) {
+            return res.status(400).send({
+                success: false,
+                message: 'Autograder is initializing'
+            })
+        } // DockerStatus.STOPPED --> continue
+    }
+
     console.log(`Pulling ${repoTag} docker image...`)
+    const model = Autograder.create({
+        name: repositoryName,
+        port: graderPort,
+        description,
+        status: DockerStatus.RUNNING
+    })
+    await model.save()
+
     docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
         if (err) console.error(err)
         docker.modem.followProgress(stream, onFinished)
@@ -51,13 +74,8 @@ export async function InitializeAutograder(req: Request, res: Response) {
             }).then(function (container) {
                 console.log(`Running ${repoTag} docker container with container id: ${container.id}`)
                 container.start().then(() => {
-                    const model = Autograder.create({
-                        containerId: container.id,
-                        port: graderPort,
-                        name: repositoryName,
-                        description,
-                        status: DockerStatus.RUNNING
-                    })
+                    model.containerId = container.id
+                    model.status = DockerStatus.RUNNING
                     model.save().then(() => {
                         console.log(`Run ${repoTag} docker container success`)
                     }, (error) => {
@@ -85,8 +103,9 @@ async function exitHandler(eventType: any) {
             const allAutograder = await Autograder.find()
             allAutograder.forEach(async (autograder) => {
                 try {
+                    await docker.getContainer(autograder.containerId as string).kill({ force: true })
+                    autograder.containerId = null
                     autograder.status = DockerStatus.STOPPED
-                    await docker.getContainer(autograder.containerId).kill({ force: true })
                 } catch (err) {
                     console.error(`error killing container with id ${autograder.containerId}`)
                     console.error(err)

@@ -7,13 +7,13 @@ import { DockerStatus } from '../Type/Docker'
 @Entity()
 export class Autograder extends BaseModel {
     @PrimaryColumn({ type: 'text', nullable: false })
-    containerId: string
+    name: string
 
     @Column({ type: 'integer', nullable: false })
     port: number
 
-    @Column({ type: 'text', nullable: false })
-    name: string
+    @Column({ type: 'text', nullable: true })
+    containerId: string | null
 
     @Column({ type: 'text', nullable: true })
     description: string
