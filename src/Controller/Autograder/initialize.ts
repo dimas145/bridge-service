@@ -33,7 +33,12 @@ export async function Initialize(req: Request, res: Response) {
                 success: false,
                 message: 'Autograder is initializing'
             })
-        } // DockerStatus.STOPPED --> continue
+        } else if (grader.status == DockerStatus.STOPPED) {
+            await docker.getContainer(grader.containerId as string).restart()
+            return res.send({
+                success: true
+            })
+        }
     }
 
     console.log(`Pulling ${repoTag} docker image...`)
@@ -41,7 +46,7 @@ export async function Initialize(req: Request, res: Response) {
         name: repositoryName,
         port: graderPort,
         description,
-        status: DockerStatus.RUNNING
+        status: DockerStatus.INITIALIZING
     })
     await model.save()
 
@@ -73,7 +78,7 @@ export async function Initialize(req: Request, res: Response) {
                 }
             }).then(function (container) {
                 console.log(`Running ${repoTag} docker container with container id: ${container.id}`)
-                container.start().then(() => {
+                container.start(() => {
                     model.containerId = container.id
                     model.status = DockerStatus.RUNNING
                     model.save().then(() => {
