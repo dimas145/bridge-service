@@ -16,7 +16,7 @@ export class SubmissionHistory extends BaseModel {
     studentUserId: number
 
     @PrimaryColumn()
-    autograderContainerId: number
+    autograderName: string
 
     @Column({ type: 'integer', nullable: false })
     grade: number

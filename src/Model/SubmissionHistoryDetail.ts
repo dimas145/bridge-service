@@ -19,7 +19,7 @@ export class SubmissionHistoryDetail extends BaseModel {
     studentUserId: number
 
     @PrimaryColumn()
-    autograderContainerId: number
+    autograderName: string
 
     @Column({ type: 'text', nullable: true })
     detail: string
