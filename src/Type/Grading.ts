@@ -1,10 +1,10 @@
 export enum GradingMethod {
-    MAXIMUM,
-    MINIMUM,
-    AVERAGE,
+    MAXIMUM = 'MAXIMUM',
+    MINIMUM = 'MINIMUM',
+    AVERAGE = 'AVERAGE',
 }
 
 export enum GradingPriority {
-    FIRST,
-    LAST,
+    FIRST = 'FIRST',
+    LAST = 'LAST',
 }

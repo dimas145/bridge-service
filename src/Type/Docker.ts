@@ -1,5 +1,5 @@
 export enum DockerStatus {
-    RUNNING,
-    STOPPED,
-    INITIALIZING,
+    RUNNING = 'RUNNING',
+    STOPPED = 'STOPPED',
+    INITIALIZING = 'INITIALIZING',
 }
