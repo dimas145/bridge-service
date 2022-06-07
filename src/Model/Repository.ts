@@ -3,6 +3,7 @@ import { Autograder } from './Autograder'
 import { BaseModel } from './Base'
 import { CodeReference } from './CodeReference'
 import { SubmissionHistory } from './SubmissionHistory'
+import { GradingMethod, GradingPriority } from '../Type/Grading'
 
 @Entity()
 export class Repository extends BaseModel {
@@ -21,11 +22,11 @@ export class Repository extends BaseModel {
     @Column({ type: 'integer', nullable: false })
     timeLimit: number
 
-    @Column({ default: 'last', enum: ['first', 'last'] })
-    gradingPriority: 'first' | 'last'
+    @Column({ default: GradingPriority.LAST, enum: GradingPriority })
+    gradingPriority: GradingPriority
 
-    @Column({ default: 'max', enum: ['max', 'min', 'avg'] })
-    gradingMethod: 'max' | 'min' | 'avg'
+    @Column({ default: GradingMethod.MAXIMUM, enum: GradingMethod })
+    gradingMethod: GradingMethod
 
     @Column({ type: 'timestamp' })
     dueDate: Date

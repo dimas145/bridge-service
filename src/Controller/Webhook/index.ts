@@ -7,6 +7,8 @@ import { Repository } from '../../Model/Repository'
 import { CodeReference } from '../../Model/CodeReference'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
 import { SubmissionHistoryDetail } from '../../Model/SubmissionHistoryDetail'
+import { DockerStatus } from '../../Type/Docker'
+import { GradingPriority } from '../../Type/Grading'
 import axios from 'axios'
 
 export async function Webhook(req: Request, res: Response) {
@@ -50,7 +52,7 @@ export async function Webhook(req: Request, res: Response) {
         return
     }
 
-    if (repository.gradingPriority == 'first') {
+    if (repository.gradingPriority == GradingPriority.FIRST) {
         const [_, count] = await SubmissionHistory.findAndCount({ repository, student })
         if (count > 0) { // not accepting any submission
             return
@@ -98,7 +100,7 @@ export async function Webhook(req: Request, res: Response) {
     for (let i = 0; i < repository.graders.length; i++) {
         const grader = repository.graders[i]
 
-        if (grader.status === 'Running') {
+        if (grader.status === DockerStatus.RUNNING) {
             const graderUrl = `http://${grader.name}:${grader.port}/grade`
 
             const submissionHistory = SubmissionHistory.create({

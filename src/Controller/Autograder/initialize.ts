@@ -1,14 +1,15 @@
 import { Request, Response } from 'express'
 import { IncomingMessage } from 'http'
-import Docker from 'dockerode'
 import { Autograder } from '../../Model/Autograder'
+import { DockerStatus } from 'src/Type/Docker'
+import Docker from 'dockerode'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function InitializeAutograder(req: Request, res: Response) {
-    const { user, repositoryName, graderPort, tag, description } = req.body
+    const { dockerUser, repositoryName, graderPort, tag, description } = req.body
 
-    if (!user || !repositoryName || !graderPort) {
+    if (!dockerUser || !repositoryName || !graderPort) {
         return res.status(400).send('Bad request')
     }
 
@@ -18,7 +19,7 @@ export async function InitializeAutograder(req: Request, res: Response) {
     } else {
         useTag = tag
     }
-    const repoTag = user + '/' + repositoryName + ':' + useTag
+    const repoTag = dockerUser + '/' + repositoryName + ':' + useTag
 
     console.log(`Pulling ${repoTag} docker image...`)
     docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
@@ -55,7 +56,7 @@ export async function InitializeAutograder(req: Request, res: Response) {
                         port: graderPort,
                         name: repositoryName,
                         description,
-                        status: 'Running'
+                        status: DockerStatus.RUNNING
                     })
                     model.save().then(() => {
                         console.log(`Run ${repoTag} docker container success`)
@@ -84,7 +85,7 @@ async function exitHandler(eventType: any) {
             const allAutograder = await Autograder.find()
             allAutograder.forEach(async (autograder) => {
                 try {
-                    autograder.status = 'Stopped'
+                    autograder.status = DockerStatus.STOPPED
                     await docker.getContainer(autograder.containerId).kill({ force: true })
                 } catch (err) {
                     console.error(`error killing container with id ${autograder.containerId}`)

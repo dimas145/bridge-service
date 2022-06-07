@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
 import { Autograder } from '../../Model/Autograder'
+import { GradingPriority } from '../../Type/Grading'
 import axios from 'axios'
 
 export async function simulateWebhook(req: Request, res: Response) {
@@ -102,7 +103,7 @@ export async function mockCreateRepo(req: Request, res: Response) {
     if (repository) {
         // update
         await Repository.update(repositoryId, {
-            gradingPriority: 'last',
+            gradingPriority: GradingPriority.LAST,
             dueDate: dueDate
         })
         console.log('Repo already exist, updating')

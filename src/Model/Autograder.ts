@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
 import { BaseModel } from './Base'
 import { Repository } from './Repository'
 import { SubmissionHistory } from './SubmissionHistory'
+import { DockerStatus } from '../Type/Docker'
 
 @Entity()
 export class Autograder extends BaseModel {
@@ -17,8 +18,8 @@ export class Autograder extends BaseModel {
     @Column({ type: 'text', nullable: true })
     description: string
 
-    @Column({ type: 'text', nullable: true })
-    status: string
+    @Column({ enum: DockerStatus })
+    status: DockerStatus
 
     @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.autograder)
     submissionHistory: SubmissionHistory[]
