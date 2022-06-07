@@ -6,14 +6,18 @@ import Docker from 'dockerode'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Start(req: Request, res: Response) {
-    const { repositoryName } = req.body
+    const { name } = req.body
 
-    const grader = await Autograder.findOne({ name: repositoryName })
+    if (!name) {
+        return res.status(400).send('Bad request')
+    }
+
+    const grader = await Autograder.findOne({ name: name })
 
     if (!grader) {
         return res.status(400).send({
             success: false,
-            message: `autograder ${repositoryName} not found`
+            message: `autograder ${name} not found`
         })
     }
 
