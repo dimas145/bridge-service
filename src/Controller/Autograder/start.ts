@@ -32,7 +32,39 @@ export async function Start(req: Request, res: Response) {
             message: 'autograder is initializing'
         })
     } else {    // DockerStatus.STOPPED
-        await docker.getContainer(grader.containerId as string).restart()
+        const finalPort = String(grader.port) + '/tcp'
+        docker.createContainer({
+            Image: grader.repoTag,
+            ExposedPorts: {
+                [finalPort]: {}
+            },
+            HostConfig: {
+                Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
+                NetworkMode: 'bridge_service',
+            },
+            NetworkingConfig: {
+                EndpointsConfig: {
+                    'bridge_service': {
+                        Aliases: [grader.name]
+                    }
+                }
+            }
+        }).then(function (container) {
+            console.log(`Running ${grader.repoTag} docker container with container id: ${container.id}`)
+            container.start(() => {
+                grader.containerId = container.id
+                grader.status = DockerStatus.RUNNING
+                grader.save().then(() => {
+                    console.log(`Run ${grader.repoTag} docker container success`)
+                }, (error) => {
+                    console.log(error)
+                })
+            })
+        }).catch(function (err) {
+            console.error(`Error running ${grader.repoTag} docker container`)
+            console.error(err)
+        })
+
         return res.send({
             success: true
         })

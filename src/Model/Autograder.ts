@@ -9,6 +9,9 @@ export class Autograder extends BaseModel {
     @PrimaryColumn({ type: 'text', nullable: false })
     name: string
 
+    @Column({ type: 'text', nullable: false })
+    repoTag: string
+
     @Column({ type: 'integer', nullable: false })
     port: number
 

@@ -36,10 +36,7 @@ export async function Initialize(req: Request, res: Response) {
                 message: 'Autograder is initializing'
             })
         } else if (grader.status == DockerStatus.STOPPED) {
-            docker.getContainer(grader.containerId as string).restart(() => {
-                grader.status = DockerStatus.RUNNING
-                grader.save()
-            })
+            createAutograderContainerAndRun(grader)
             return res.send({
                 success: true,
                 message: 'Autograder already exist, restarting...'
@@ -48,6 +45,7 @@ export async function Initialize(req: Request, res: Response) {
     } catch (_) {
         grader = Autograder.create({
             name: repositoryName,
+            repoTag,
             port: graderPort,
             description,
         })
@@ -66,43 +64,47 @@ export async function Initialize(req: Request, res: Response) {
                 console.error(err)
             console.log(`Pull ${repoTag} docker image done`)
 
-            const finalPort = String(graderPort) + '/tcp'
-            docker.createContainer({
-                Image: repoTag,
-                ExposedPorts: {
-                    [finalPort]: {}
-                },
-                HostConfig: {
-                    Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
-                    NetworkMode: 'bridge_service',
-                },
-                NetworkingConfig: {
-                    EndpointsConfig: {
-                        'bridge_service': {
-                            Aliases: [repositoryName]
-                        }
-                    }
-                }
-            }).then(function (container) {
-                console.log(`Running ${repoTag} docker container with container id: ${container.id}`)
-                container.start(() => {
-                    grader.containerId = container.id
-                    grader.status = DockerStatus.RUNNING
-                    grader.save().then(() => {
-                        console.log(`Run ${repoTag} docker container success`)
-                    }, (error) => {
-                        console.log(error)
-                    })
-                })
-            }).catch(function (err) {
-                console.error(`Error running ${repoTag} docker container`)
-                console.error(err)
-            })
+            createAutograderContainerAndRun(grader)
         }
     })
 
     return res.send({
         success: true
+    })
+}
+
+function createAutograderContainerAndRun(grader: Autograder) {
+    const finalPort = String(grader.port) + '/tcp'
+    docker.createContainer({
+        Image: grader.repoTag,
+        ExposedPorts: {
+            [finalPort]: {}
+        },
+        HostConfig: {
+            Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
+            NetworkMode: 'bridge_service',
+        },
+        NetworkingConfig: {
+            EndpointsConfig: {
+                'bridge_service': {
+                    Aliases: [grader.name]
+                }
+            }
+        }
+    }).then(function (container) {
+        console.log(`Running ${grader.repoTag} docker container with container id: ${container.id}`)
+        container.start(() => {
+            grader.containerId = container.id
+            grader.status = DockerStatus.RUNNING
+            grader.save().then(() => {
+                console.log(`Run ${grader.repoTag} docker container success`)
+            }, (error) => {
+                console.log(error)
+            })
+        })
+    }).catch(function (err) {
+        console.error(`Error running ${grader.repoTag} docker container`)
+        console.error(err)
     })
 }
 
@@ -113,16 +115,23 @@ async function exitHandler(eventType: any) {
         try {
             // clean up autograder table
             const allAutograder = await Autograder.find()
-            allAutograder.forEach(async (autograder) => {
+
+            for (let i = 0; i < allAutograder.length; i++) {
+                const autograder = allAutograder[i]
                 try {
-                    await docker.getContainer(autograder.containerId as string).stop()
+                    const container = docker.getContainer(autograder.containerId as string)
+                    await container.kill({ force: true })
+                    await container.remove()
+
                     autograder.containerId = null
                     autograder.status = DockerStatus.STOPPED
                 } catch (err) {
                     console.error(`error killing container with id ${autograder.containerId}`)
                     console.error(err)
                 }
-            })
+            }
+
+            console.log(allAutograder)
             await Autograder.save(allAutograder)
             console.log('clean up done')
         } catch (err) {
