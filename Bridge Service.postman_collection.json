@@ -15,12 +15,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8085/ping",
-							"protocol": "http",
+							"raw": "https://3989-180-244-139-250.ap.ngrok.io/ping",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"3989-180-244-139-250",
+								"ap",
+								"ngrok",
+								"io"
 							],
-							"port": "8085",
 							"path": [
 								"ping"
 							]
@@ -98,7 +100,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"courseId\": 1,\n    \"activityId\": 1,\n    \"contentHash\": \"EE8D5DC7927F65D4CC9917F7ECD35848\",\n    \"extension\": \"json\",\n    \"filename\": \"testcase_1\",\n    \"rawContent\": \"ewogICJpbnB1dCI6ICIiLAogICJvdXRwdXQiOiAidGVzdCB0cnVlIgp9\"\n}\n",
+							"raw": "{\n    \"courseId\": 1,\n    \"activityId\": 3,\n    \"contentHash\": \"EE8D5DC7927F65D4CC9917F7ECD35848\",\n    \"extension\": \"json\",\n    \"filename\": \"testcase_1\",\n    \"rawContent\": \"ewogICJpbnB1dCI6ICIiLAogICJvdXRwdXQiOiAidGVzdCB0cnVlIgp9\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -252,6 +254,73 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"success\": true\n}"
+						},
+						{
+							"name": "Save Same Reference",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"courseId\": 1,\n    \"activityId\": 3,\n    \"contentHash\": \"EE8D5DC7927F65D4CC9917F7ECD35848\",\n    \"extension\": \"json\",\n    \"filename\": \"testcase_1\",\n    \"rawContent\": \"ewogICJpbnB1dCI6ICIiLAogICJvdXRwdXQiOiAidGVzdCB0cnVlIgp9\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/moodle/saveReference",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"moodle",
+										"saveReference"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "44"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2c-Tkk/JpFR6qC2hRtnyyz0BE7rb9w\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 07 Jun 2022 14:55:44 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"already created\"\n}"
 						}
 					]
 				}
@@ -267,7 +336,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"courseId\": \"1\",\n    \"activityId\": \"1\"\n}\n",
+							"raw": "{\n    \"courseId\": \"1\",\n    \"activityId\": \"1\",\n    \"autograders\": [\n        \"python-black-box-autograder\"\n    ]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -453,20 +522,15 @@
 							"body": "{\n    \"error\": false,\n    \"message\": \"success\",\n    \"data\": {\n        \"grade\": 100,\n        \"extra\": {\n            \"feedback\": [\n                \"correct answer\"\n            ]\n        }\n    }\n}"
 						}
 					]
-				}
-			]
-		},
-		{
-			"name": "Docker",
-			"item": [
+				},
 				{
-					"name": "Docker pull",
+					"name": "Test",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+							"raw": "{\n    \"courseId\": \"1\",\n    \"activityId\": \"1\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -474,27 +538,27 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8085/docker/pull",
+							"raw": "http://localhost:8085/test/test",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8085",
 							"path": [
-								"docker",
-								"pull"
+								"test",
+								"test"
 							]
 						}
 					},
 					"response": [
 						{
-							"name": "Docker pull",
+							"name": "Test Simulate All",
 							"originalRequest": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"user\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"raw": "{\n    \"courseId\": \"1\",\n    \"activityId\": \"1\",\n    \"graderName\": \"python-black-box-autograder\",\n    \"rawContentSolution\": \"cHJpbnQoInRlc3QgdHJ1ZSIpCg==\"\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -502,15 +566,117 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8085/docker/pull",
+									"raw": "http://localhost:8085/test/simulateWebhook",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
 									"port": "8085",
 									"path": [
-										"docker",
-										"pull"
+										"test",
+										"simulateWebhook"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "96"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"60-exq127nI6ZnqSBnAaJZivBfa4SQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 30 May 2022 03:50:10 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": false,\n    \"message\": \"success\",\n    \"data\": {\n        \"grade\": 100,\n        \"extra\": {\n            \"feedback\": [\n                \"correct answer\"\n            ]\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Autograder",
+			"item": [
+				{
+					"name": "Initialize",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/autograder/initialize",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"autograder",
+								"initialize"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Initialize Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/autograder/initialize",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"autograder",
+										"initialize"
 									]
 								}
 							},
@@ -540,7 +706,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 30 May 2022 03:37:16 GMT"
+									"value": "Tue, 07 Jun 2022 14:52:45 GMT"
 								},
 								{
 									"key": "Connection",
@@ -553,6 +719,406 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"success\": true\n}"
+						},
+						{
+							"name": "Initialize Fail Already Running",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/autograder/initialize",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"autograder",
+										"initialize"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "59"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3b-PUe3kjCli+Dr4yE9788o/cdPTbE\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 07 Jun 2022 14:54:08 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Autograder is already running\"\n}"
+						},
+						{
+							"name": "Initialize Fail Already Initializing",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/autograder/initialize",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"autograder",
+										"initialize"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "56"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"38-EtMQGposAhArDYZ1cVaRLwrt1W8\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 07 Jun 2022 15:46:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Autograder is initializing\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Start",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"python-black-box-autograder\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/autograder/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"autograder",
+								"start"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Start Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"python-black-box-autograder\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/autograder/start",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"autograder",
+										"start"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "16"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"10-oV4hJxRVSENxc/wX8+mA4/Pe4tA\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 07 Jun 2022 16:28:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true\n}"
+						},
+						{
+							"name": "Start Fail Already Running",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"python-black-box-autograder\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/autograder/start",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"autograder",
+										"start"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "56"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"38-z3gLu9lYDrOMUFFqTs6lkLfEwNE\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 07 Jun 2022 15:12:20 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"autograder already running\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Gitlab",
+			"item": [
+				{
+					"name": "Create Repository",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"test\",\n    \"courseId\": \"1\",\n    \"activityId\": \"3\",\n    \"instance\": \"1\",\n    \"gradingPriority\": \"LAST\",\n    \"gradingMethod\": \"MAXIMUM\",\n    \"timeLimit\": 3000,\n    \"dueDate\": \"1660000000\",\n    \"autograders\": [\n        \"python-black-box-autograder\"\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8085/gitlab/createRepository",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"gitlab",
+								"createRepository"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Repository",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"test\",\n    \"courseId\": \"1\",\n    \"activityId\": \"3\",\n    \"instance\": \"1\",\n    \"gradingPriority\": \"LAST\",\n    \"gradingMethod\": \"MAXIMUM\",\n    \"timeLimit\": 3000,\n    \"dueDate\": \"1660000000\",\n    \"autograders\": [\n        \"python-black-box-autograder\"\n    ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8085/gitlab/createRepository",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8085",
+									"path": [
+										"gitlab",
+										"createRepository"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "68"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"44-vSXbknxTVGaY5QSABoQ/VfJGSfA\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 07 Jun 2022 14:53:26 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"gitlabUrl\": \"https://gitlab.com/dimas1451/test-1-3\"\n}"
 						}
 					]
 				}
