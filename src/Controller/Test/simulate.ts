@@ -50,7 +50,7 @@ export async function simulateWebhook(req: Request, res: Response) {
             message: 'code references doesnt exist in db'
         })
     } else {
-        const graderUrl = `http://${graderName}:${grader.port}/grade`
+        const graderUrl = `http://${graderName}:${grader.port}${grader.endpoint}`
         try {
             const response = await axios.post(graderUrl, {
                 references: references.map((ref) => ref.content),

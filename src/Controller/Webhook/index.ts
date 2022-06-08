@@ -101,7 +101,7 @@ export async function Webhook(req: Request, res: Response) {
         const grader = repository.graders[i]
 
         if (grader.status === DockerStatus.RUNNING) {
-            const graderUrl = `http://${grader.name}:${grader.port}/grade`
+            const graderUrl = `http://${grader.name}:${grader.port}${grader.endpoint}`
 
             const submissionHistory = SubmissionHistory.create({
                 repository,

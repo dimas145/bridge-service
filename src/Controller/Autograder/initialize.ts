@@ -7,9 +7,9 @@ import Docker from 'dockerode'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Initialize(req: Request, res: Response) {
-    const { dockerUser, repositoryName, graderPort, tag, description } = req.body
+    const { dockerUser, repositoryName, graderPort, gradingEndpoint, tag, description } = req.body
 
-    if (!dockerUser || !repositoryName || !graderPort) {
+    if (!dockerUser || !repositoryName || !graderPort || !gradingEndpoint) {
         return res.status(400).send('Bad request')
     }
 
@@ -47,6 +47,7 @@ export async function Initialize(req: Request, res: Response) {
             name: repositoryName,
             repoTag,
             port: graderPort,
+            endpoint: gradingEndpoint,
             description,
         })
     }
