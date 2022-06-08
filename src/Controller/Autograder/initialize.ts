@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { IncomingMessage } from 'http'
 import { Autograder } from '../../Model/Autograder'
 import { DockerStatus } from '../../Type/Docker'
+import { getConnectionManager } from 'typeorm'
 import Docker from 'dockerode'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
@@ -112,7 +113,7 @@ function createAutograderContainerAndRun(grader: Autograder) {
 // handle exit service, stop and remove all running autograder container
 async function exitHandler(eventType: any) {
     console.log('clean up before exiting')
-    if (eventType || eventType === 0) {
+    if (getConnectionManager().connections.length > 0 && (eventType || eventType === 0)) {
         try {
             // clean up autograder table
             const allAutograder = await Autograder.find()
@@ -132,7 +133,6 @@ async function exitHandler(eventType: any) {
                 }
             }
 
-            console.log(allAutograder)
             await Autograder.save(allAutograder)
             console.log('clean up done')
         } catch (err) {
