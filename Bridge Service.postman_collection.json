@@ -632,7 +632,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+							"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"gradingEndpoint\": \"/grade\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -660,7 +660,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"gradingEndpoint\": \"/grade\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -727,7 +727,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"gradingEndpoint\": \"/grade\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -794,7 +794,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
+									"raw": "{\n    \"dockerUser\": \"rixpl\",\n    \"repositoryName\": \"python-black-box-autograder\",\n    \"gradingEndpoint\": \"/grade\",\n    \"graderPort\": 5000,\n    \"tag\": \"latest\",\n    \"description\": \"Black box autograder for python only\"\n}\n",
 									"options": {
 										"raw": {
 											"language": "json"
