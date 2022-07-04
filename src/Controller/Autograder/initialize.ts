@@ -8,13 +8,28 @@ import Docker from 'dockerode'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Initialize(req: Request, res: Response) {
-    const { dockerUser, repositoryName, graderPort, gradingEndpoint, tag, description } = req.body
+    const { dockerUser, repositoryName, port, endpoint, tag, description } = req.body
 
-    if (!dockerUser || !repositoryName || !graderPort || !gradingEndpoint) {
+    if (!dockerUser || !repositoryName) {
         return res.status(400).send('Bad request')
     }
 
-    let useTag = ''
+    // validation, use default value if not specified
+    let graderPort
+    if (!port) {
+        graderPort = 5000
+    } else {
+        graderPort = port
+    }
+
+    let gradingEndpoint
+    if (!endpoint) {
+        gradingEndpoint = '/grade'
+    } else {
+        gradingEndpoint = endpoint
+    }
+
+    let useTag
     if (!tag || tag == '') {
         useTag = 'latest'
     } else {
