@@ -28,7 +28,7 @@ export async function updateMoodle(req: Request, res: Response) {
                     'users[0][customfields][1][value]': 1
                 }
             })
-            return res.redirect(process.env.MOODLE_HOST as string + '/user/profile.php')
+            return res.redirect(process.env.MOODLE_HOST as string + '/user/profile.php?id=' + userId as string)
         } catch (error) {
             return res.send(error)
         }
@@ -48,7 +48,7 @@ export async function updateMoodle(req: Request, res: Response) {
             }
         })
         if (resp.status === 200) {
-            return res.redirect(process.env.MOODLE_HOST as string + '/user/profile.php')
+            return res.redirect(process.env.MOODLE_HOST as string + '/user/profile.php?id=' + userId as string)
         } else {
             return res.send('something error')
         }
