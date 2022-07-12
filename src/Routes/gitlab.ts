@@ -10,7 +10,7 @@ const gitlabRoute = express.Router()
 gitlabRoute.post('/createRepository', RequestWrapper(createRepository))
 
 passport.use(new GitLabStrategy({
-    baseUrl: process.env.GITLAB_HOST as string,
+    baseURL: process.env.GITLAB_HOST as string,
     clientID: process.env.GITLAB_APP_ID as string,
     clientSecret: process.env.GITLAB_APP_SECRET as string,
     callbackURL: process.env.SERVICE_BRIDGE_URL as string + '/gitlab/auth/callback',
