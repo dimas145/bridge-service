@@ -20,17 +20,6 @@ export async function saveReference(req: Request, res: Response) {
         return res.status(404).send('repository not found')
     }
 
-    const reference = await CodeReference.findOne({
-        contentHash
-    })
-
-    if (reference && reference.contentHash === contentHash) {
-        return res.send({
-            success: true,
-            message: 'already created'
-        })
-    }
-
     const model = CodeReference.create({
         contentHash,
         extension,
