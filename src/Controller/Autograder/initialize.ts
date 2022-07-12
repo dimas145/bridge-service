@@ -136,12 +136,12 @@ async function exitHandler(eventType: any) {
             for (let i = 0; i < allAutograder.length; i++) {
                 const autograder = allAutograder[i]
                 try {
+                    autograder.status = DockerStatus.STOPPED
                     const container = docker.getContainer(autograder.containerId as string)
                     await container.kill({ force: true })
                     await container.remove()
 
                     autograder.containerId = null
-                    autograder.status = DockerStatus.STOPPED
                 } catch (err) {
                     console.error(`error killing container with id ${autograder.containerId}`)
                     console.error(err)
