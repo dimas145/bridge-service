@@ -6,7 +6,7 @@ import { Autograder } from '../../Model/Autograder'
 export async function createRepository(req: Request, res: Response) {
     console.log(`hit ${new Date()} - create repository`)
 
-    const { name, courseId, activityId, instance, gradingPriority, gradingMethod, timeLimit, dueDate, autograders } = req.body
+    const { name, courseId, activityId, gradingPriority, gradingMethod, timeLimit, dueDate, autograders } = req.body
 
     const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
     const repository = await Repository.findOne(repositoryId)
@@ -68,7 +68,6 @@ export async function createRepository(req: Request, res: Response) {
         const model = Repository.create({
             activityId,
             courseId,
-            instance,
             gitlabUrl: project.web_url as string,
             gradingPriority,
             gradingMethod,

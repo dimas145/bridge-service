@@ -79,7 +79,6 @@ export async function mockCreateRepo(req: Request, res: Response) {
     }
 
     // mock create repo
-    const instance: number = 1
     const dueDate: Date = new Date()
     dueDate.setDate(dueDate.getDate() + 1) // add 1 day
 
@@ -112,7 +111,6 @@ export async function mockCreateRepo(req: Request, res: Response) {
         const model = Repository.create({
             activityId,
             courseId,
-            instance,
             timeLimit: 3000,
             gitlabUrl: 'dummy',
             dueDate: dueDate,

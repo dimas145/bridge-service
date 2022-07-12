@@ -13,9 +13,6 @@ export class Repository extends BaseModel {
     @PrimaryColumn({ type: 'integer', nullable: false })
     courseId: number
 
-    @Column({ type: 'integer', nullable: false })
-    instance: number
-
     @Column({ type: 'text', nullable: false })
     gitlabUrl: string
 
