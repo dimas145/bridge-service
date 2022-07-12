@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, Index } from 'typeorm'
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
 import { BaseModel } from './Base'
 import { Repository } from './Repository'
 
@@ -7,7 +7,6 @@ export class CodeReference extends BaseModel {
     @PrimaryGeneratedColumn('increment')
     id: number
 
-    @Index({ 'unique': true })
     @Column({ type: 'text', nullable: false, unique: true })
     contentHash: string
 
