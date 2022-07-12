@@ -130,6 +130,27 @@ export async function Webhook(req: Request, res: Response) {
 
                         submissionHistoryDetail.save()
                     }
+
+                    try {
+                        await axios.get(process.env.MOODLE_HOST + '/webservice/rest/server.php', {
+                            params: {
+                                'moodlewsrestformat': 'json',
+                                'wstoken': process.env.MOODLE_TOKEN,
+                                'wsfunction': Constant.WS_FUNCTION_UPDATE_GRADE,
+                                'source': Constant.UPDATE_GRADE_SOURCE,
+                                'courseid': courseId,
+                                'component': Constant.UPDATE_GRADE_COMPONENT,
+                                'activityid': activityId,
+                                'itemnumber': 0,
+                                'grades[0][studentid]': student.userId,
+                                'grades[0][grade]': submissionHistory.grade,
+                                'grades[0][str_feedback]': JSON.stringify(responseData.feedback),
+                            }
+                        })
+                        console.log('success')
+                    } catch (error){
+                        console.log('error',error)
+                    }
                 } else {
                     throw new Error(response.data.message)
                 }
