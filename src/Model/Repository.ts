@@ -8,10 +8,10 @@ import { GradingMethod, GradingPriority } from '../Type/Grading'
 @Entity()
 export class Repository extends BaseModel {
     @PrimaryColumn({ type: 'integer', nullable: false })
-    activityId: number
+    courseId: number
 
     @PrimaryColumn({ type: 'integer', nullable: false })
-    courseId: number
+    assignmentId: number
 
     @Column({ type: 'text', nullable: false })
     gitlabUrl: string

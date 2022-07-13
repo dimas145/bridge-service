@@ -5,7 +5,7 @@ import { Repository } from '../../Model/Repository'
 export async function saveReference(req: Request, res: Response) {
     console.log(`hit ${new Date()} - save code reference file`)
 
-    const { courseId, activityId, contentHash, extension, filename, rawContent } = req.body
+    const { courseId, assignmentId, contentHash, extension, filename, rawContent } = req.body
 
     if (!contentHash || !extension || !filename || !rawContent) {
         return res.status(400).send('Bad request')
@@ -13,7 +13,7 @@ export async function saveReference(req: Request, res: Response) {
 
     const repository = await Repository.findOne({
         courseId: Number(courseId),
-        activityId: Number(activityId)
+        assignmentId: Number(assignmentId)
     })
 
     if (!repository) {

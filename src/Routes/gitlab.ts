@@ -42,6 +42,4 @@ passport.deserializeUser(function (user: any, done) {
     done(null, user)
 })
 
-// gitlab oauth buat mapping user moodle & gitlab disimpen ke db (apakah psql?) trus confirm ke moodle kalau udh beres verifnya
-
 export { gitlabRoute }

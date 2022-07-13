@@ -6,9 +6,9 @@ import { Autograder } from '../../Model/Autograder'
 export async function createRepository(req: Request, res: Response) {
     console.log(`hit ${new Date()} - create repository`)
 
-    const { name, courseId, activityId, gradingPriority, gradingMethod, timeLimit, dueDate, autograders } = req.body
+    const { name, courseId, assignmentId, gradingPriority, gradingMethod, timeLimit, dueDate, autograders } = req.body
 
-    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repositoryId = { courseId: Number(courseId), assignmentId: Number(assignmentId) }
     const repository = await Repository.findOne(repositoryId)
     if (repository) {
         // update
@@ -33,7 +33,7 @@ export async function createRepository(req: Request, res: Response) {
 
     try {
         const project = await projectService.create({
-            name: `${name}-${courseId}-${activityId}`,
+            name: `${name}-${courseId}-${assignmentId}`,
             visibility: 'public',
             merge_requests_access_level: 'enabled',
             issues_access_level: 'enabled',
@@ -42,7 +42,7 @@ export async function createRepository(req: Request, res: Response) {
 
         await projectHookService.add(
             Number(project.id),
-            process.env.SERVICE_BRIDGE_URL + '/webhook/' + courseId + '/' + activityId,
+            process.env.SERVICE_BRIDGE_URL + '/webhook/' + courseId + '/' + assignmentId,
             {
                 push_events: false,
                 merge_requests_events: true,
@@ -66,7 +66,7 @@ export async function createRepository(req: Request, res: Response) {
         }
 
         const model = Repository.create({
-            activityId,
+            assignmentId,
             courseId,
             gitlabUrl: project.web_url as string,
             gradingPriority,

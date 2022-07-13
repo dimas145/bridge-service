@@ -72,9 +72,9 @@ export async function simulateWebhook(req: Request, res: Response) {
 }
 
 export async function mockCreateRepo(req: Request, res: Response) {
-    const { courseId, activityId, autograders } = req.body
+    const { courseId, assignmentId, autograders } = req.body
 
-    if (!courseId || !activityId) {
+    if (!courseId || !assignmentId) {
         return res.status(400).send('Bad request')
     }
 
@@ -82,7 +82,7 @@ export async function mockCreateRepo(req: Request, res: Response) {
     const dueDate: Date = new Date()
     dueDate.setDate(dueDate.getDate() + 1) // add 1 day
 
-    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repositoryId = { courseId: Number(courseId), assignmentId: Number(assignmentId) }
     const repository = await Repository.findOne(repositoryId)
 
     const graders: Autograder[] = []
@@ -109,7 +109,7 @@ export async function mockCreateRepo(req: Request, res: Response) {
         console.log('Repo already exist, updating')
     } else {
         const model = Repository.create({
-            activityId,
+            assignmentId,
             courseId,
             timeLimit: 3000,
             gitlabUrl: 'dummy',
@@ -135,11 +135,11 @@ export async function mockCreateRepo(req: Request, res: Response) {
 }
 
 export async function test(req: Request, res: Response) {
-    const { courseId, activityId } = req.body
+    const { courseId, assignmentId } = req.body
 
     const repo = await Repository.findOneOrFail({
         relations: ['graders'],
-        where: { courseId, activityId }
+        where: { courseId, assignmentId }
     })
     return res.send({
         success: true,
