@@ -8,9 +8,9 @@ import Docker from 'dockerode'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Initialize(req: Request, res: Response) {
-    const { dockerUser, repositoryName, port, endpoint, tag, description } = req.body
+    const { dockerUser, name, displayedName, port, endpoint, tag, description } = req.body
 
-    if (!dockerUser || !repositoryName) {
+    if (!dockerUser || !name || !displayedName) {
         return res.status(400).send('Bad request')
     }
 
@@ -35,11 +35,11 @@ export async function Initialize(req: Request, res: Response) {
     } else {
         useTag = tag
     }
-    const repoTag = dockerUser + '/' + repositoryName + ':' + useTag
+    const repoTag = dockerUser + '/' + name + ':' + useTag
 
     let grader: Autograder
     try {
-        grader = await Autograder.findOneOrFail({ name: repositoryName })
+        grader = await Autograder.findOneOrFail({ name })
 
         if (grader.status == DockerStatus.RUNNING) {
             return res.status(400).send({
@@ -60,7 +60,8 @@ export async function Initialize(req: Request, res: Response) {
         }
     } catch (_) {
         grader = Autograder.create({
-            name: repositoryName,
+            name,
+            displayedName,
             repoTag,
             port: graderPort,
             endpoint: gradingEndpoint,

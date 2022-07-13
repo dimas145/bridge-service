@@ -7,6 +7,6 @@ export async function Running(_: Request, res: Response) {
 
     return res.send({
         success: true,
-        autograders: autograders.map((grader) => grader.name)
+        autograders: autograders.map((grader) => grader.displayedName)
     })
 }

@@ -10,6 +10,9 @@ export class Autograder extends BaseModel {
     name: string
 
     @Column({ type: 'text', nullable: false })
+    displayedName: string
+
+    @Column({ type: 'text', nullable: false })
     repoTag: string
 
     @Column({ type: 'text', nullable: false })
