@@ -7,10 +7,10 @@ import { Student } from './Student'
 @Entity()
 export class SubmissionHistory extends BaseModel {
     @PrimaryColumn()
-    repositoryActivityId: number
+    repositoryCourseId: number
 
     @PrimaryColumn()
-    repositoryCourseId: number
+    repositoryAssignmentId: number
 
     @PrimaryColumn()
     studentUserId: number

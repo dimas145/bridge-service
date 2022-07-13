@@ -18,7 +18,7 @@ export async function Webhook(req: Request, res: Response) {
         return
     }
 
-    const { courseId, activityId } = req.params
+    const { courseId, assignmentId } = req.params
 
     const webhookBody: WebhookType.WebhookBody = req.body
 
@@ -33,7 +33,7 @@ export async function Webhook(req: Request, res: Response) {
         return // no need to process user that hasn't register
     }
 
-    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repositoryId = { courseId: Number(courseId), assignmentId: Number(assignmentId) }
     const repository = await Repository.findOne({
         relations: ['graders'],
         where: repositoryId
@@ -129,27 +129,6 @@ export async function Webhook(req: Request, res: Response) {
                         submissionHistoryDetail.detail = feedbacks[j]
 
                         submissionHistoryDetail.save()
-                    }
-
-                    try {
-                        await axios.get(process.env.MOODLE_HOST + '/webservice/rest/server.php', {
-                            params: {
-                                'moodlewsrestformat': 'json',
-                                'wstoken': process.env.MOODLE_TOKEN,
-                                'wsfunction': Constant.WS_FUNCTION_UPDATE_GRADE,
-                                'source': Constant.UPDATE_GRADE_SOURCE,
-                                'courseid': courseId,
-                                'component': Constant.UPDATE_GRADE_COMPONENT,
-                                'activityid': activityId,
-                                'itemnumber': 0,
-                                'grades[0][studentid]': student.userId,
-                                'grades[0][grade]': submissionHistory.grade,
-                                'grades[0][str_feedback]': JSON.stringify(responseData.feedback),
-                            }
-                        })
-                        console.log('success')
-                    } catch (error){
-                        console.log('error',error)
                     }
                 } else {
                     throw new Error(response.data.message)

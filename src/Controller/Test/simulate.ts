@@ -18,13 +18,13 @@ export async function simulateWebhook(req: Request, res: Response) {
      * 5. Call this API using POST request to {url}/test/simulateWebhook
      */
 
-    const { courseId, activityId, graderName, rawContentSolution, solutionFileName } = req.body
+    const { courseId, assignmentId, graderName, rawContentSolution, solutionFileName } = req.body
 
-    if (!courseId || !activityId || !graderName || !rawContentSolution || !solutionFileName) {
+    if (!courseId || !assignmentId || !graderName || !rawContentSolution || !solutionFileName) {
         return res.status(400).send('Bad request')
     }
 
-    const repositoryId = { courseId: Number(courseId), activityId: Number(activityId) }
+    const repositoryId = { courseId: Number(courseId), assignmentId: Number(assignmentId) }
     const repository = await Repository.findOne(repositoryId)
     const grader = await Autograder.findOne({ name: graderName })
 

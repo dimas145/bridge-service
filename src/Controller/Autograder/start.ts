@@ -12,7 +12,7 @@ export async function Start(req: Request, res: Response) {
         return res.status(400).send('Bad request')
     }
 
-    const grader = await Autograder.findOne({ name: name })
+    const grader = await Autograder.findOne({ name })
 
     if (!grader) {
         return res.status(400).send({
