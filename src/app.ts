@@ -4,6 +4,7 @@ import { gitlabRoute } from './Routes/gitlab'
 import { moodleRoute } from './Routes/moodle'
 import { webhookRoute } from './Routes/webhook'
 import { autograderRoute } from './Routes/autograder'
+import { submissionRoute } from './Routes/submission'
 import passport from 'passport'
 import cors from 'cors'
 import path from 'path'
@@ -39,5 +40,6 @@ app.use('/webhook', webhookRoute)
 app.use('/gitlab', gitlabRoute)
 app.use('/moodle', moodleRoute)
 app.use('/autograder', autograderRoute)
+app.use('/submission', submissionRoute)
 
 export default app
