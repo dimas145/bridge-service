@@ -8,7 +8,7 @@ import { CodeReference } from '../../Model/CodeReference'
 import { SubmissionHistory } from '../../Model/SubmissionHistory'
 import { SubmissionHistoryDetail } from '../../Model/SubmissionHistoryDetail'
 import { DockerStatus } from '../../Type/Docker'
-import { GradingPriority } from '../../Type/Grading'
+import { GradingMethod, GradingPriority } from '../../Type/Grading'
 import axios from 'axios'
 
 export async function Webhook(req: Request, res: Response) {
@@ -97,6 +97,8 @@ export async function Webhook(req: Request, res: Response) {
         gradingMethod: repository.gradingMethod
     }
 
+    let finalGrade = repository.gradingMethod == GradingMethod.MAXIMUM ? 0 : 100
+    let count = 0
     for (let i = 0; i < repository.graders.length; i++) {
         const grader = repository.graders[i]
 
@@ -138,6 +140,37 @@ export async function Webhook(req: Request, res: Response) {
                 submissionHistory.grade = 0
                 await submissionHistory.save()
             }
+
+            if (repository.gradingMethod == GradingMethod.AVERAGE) {
+                finalGrade += submissionHistory.grade
+                count += 1
+            } else if (repository.gradingMethod == GradingMethod.MAXIMUM && submissionHistory.grade > finalGrade ||
+                repository.gradingMethod == GradingMethod.MINIMUM && submissionHistory.grade < finalGrade) {
+                finalGrade = submissionHistory.grade
+            }
         }
+    }
+
+    if (repository.gradingMethod == GradingMethod.AVERAGE) {
+        finalGrade /= count
+    }
+    try {
+        await axios.get(process.env.MOODLE_HOST + '/webservice/rest/server.php', {
+            params: {
+                'moodlewsrestformat': 'json',
+                'wstoken': process.env.MOODLE_TOKEN,
+                'wsfunction': Constant.WS_FUNCTION_UPDATE_GRADE,
+                'assignmentid': assignmentId,
+                'userid': student.userId,
+                'grade': finalGrade,
+                'attemptnumber': -1,
+                'addattempt': 1,
+                'workflowstate': Constant.WORKFLOWSTATE,
+                'applytoall': 0,
+            }
+        })
+        console.log('success')
+    } catch (error) {
+        console.log('error', error)
     }
 }
