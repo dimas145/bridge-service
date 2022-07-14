@@ -7,7 +7,7 @@ export class CodeReference extends BaseModel {
     @PrimaryGeneratedColumn('increment')
     id: number
 
-    @Column({ type: 'text', nullable: false, unique: true })
+    @Column({ type: 'text', nullable: false })
     contentHash: string
 
     @Column({ type: 'text', nullable: false })
