@@ -32,6 +32,21 @@ export async function createRepository(req: Request, res: Response) {
     })
 
     try {
+        const graders: Autograder[] = []
+        for (let i = 0; i < autograders.length; i++) {
+            let grader: Autograder
+            try {
+                grader = await Autograder.findOneOrFail({ displayedName: autograders[i] })
+            } catch (error) {
+                console.log(error)
+                return res.status(400).send({
+                    success: false,
+                    message: `autograder ${autograders[i]} doesn't exist`
+                })
+            }
+            graders.push(grader)
+        }
+
         const project = await projectService.create({
             name: `${name}-${courseId}-${assignmentId}`,
             visibility: 'public',
@@ -49,21 +64,6 @@ export async function createRepository(req: Request, res: Response) {
                 token: process.env.GITLAB_WEBHOOK_SECRET_TOKEN,
             }
         )
-
-        const graders: Autograder[] = []
-        for (let i = 0; i < autograders.length; i++) {
-            let grader: Autograder
-            try {
-                grader = await Autograder.findOneOrFail({ name: autograders[i] })
-            } catch (error) {
-                console.log(error)
-                return res.status(400).send({
-                    success: false,
-                    message: `autograder ${autograders[i]} doesn't exist`
-                })
-            }
-            graders.push(grader)
-        }
 
         const model = Repository.create({
             assignmentId,
