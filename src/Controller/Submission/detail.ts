@@ -39,7 +39,7 @@ export async function detail(req: Request, res: Response) {
             }
 
             submission.push({
-                graderName: grader.name,
+                graderName: grader.displayedName,
                 feedbacks
             })
         }
