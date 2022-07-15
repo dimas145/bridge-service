@@ -139,8 +139,7 @@ async function exitHandler(eventType: any) {
                 try {
                     autograder.status = DockerStatus.STOPPED
                     const container = docker.getContainer(autograder.containerId as string)
-                    await container.kill({ force: true })
-                    await container.remove()
+                    await container.stop()
 
                     autograder.containerId = null
                 } catch (err) {

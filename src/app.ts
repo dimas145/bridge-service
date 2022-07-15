@@ -6,6 +6,7 @@ import { webhookRoute } from './Routes/webhook'
 import { autograderRoute } from './Routes/autograder'
 import { submissionRoute } from './Routes/submission'
 import { repositoryRoute } from './Routes/repository'
+import { healthCheckScheduler } from './Scheduler/healthChecker'
 import passport from 'passport'
 import cors from 'cors'
 import path from 'path'
@@ -43,5 +44,12 @@ app.use('/moodle', moodleRoute)
 app.use('/autograder', autograderRoute)
 app.use('/submission', submissionRoute)
 app.use('/repository', repositoryRoute)
+
+// scheduler
+const scheduler = healthCheckScheduler()
+
+process.on('SIGTERM', () => {
+    scheduler.stop()
+})
 
 export default app
