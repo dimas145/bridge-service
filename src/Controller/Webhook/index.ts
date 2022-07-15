@@ -97,7 +97,7 @@ export async function Webhook(req: Request, res: Response) {
         gradingMethod: repository.gradingMethod
     }
 
-    let finalGrade = repository.gradingMethod == GradingMethod.MAXIMUM ? 0 : 100
+    let finalGrade = repository.gradingMethod == GradingMethod.MINIMUM ? 100 : 0
     let count = 0
     for (let i = 0; i < repository.graders.length; i++) {
         const grader = repository.graders[i]
@@ -151,7 +151,7 @@ export async function Webhook(req: Request, res: Response) {
         }
     }
 
-    if (repository.gradingMethod == GradingMethod.AVERAGE) {
+    if (repository.gradingMethod == GradingMethod.AVERAGE && finalGrade > 0 && count > 0) {
         finalGrade /= count
     }
     try {
