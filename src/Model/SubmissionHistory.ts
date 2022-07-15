@@ -18,7 +18,7 @@ export class SubmissionHistory extends BaseModel {
     @PrimaryColumn()
     autograderName: string
 
-    @Column({ type: 'integer', nullable: false })
+    @Column({ type: 'float', nullable: false })
     grade: number
 
     @ManyToOne(() => Repository, repository => repository.submissionHistory)
