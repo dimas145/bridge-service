@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
+import { SubmissionHistory } from '../../Model/SubmissionHistory'
 import { SubmissionHistoryDetail } from '../../Model/SubmissionHistoryDetail'
 
 export async function detail(req: Request, res: Response) {
@@ -16,9 +17,15 @@ export async function detail(req: Request, res: Response) {
             where: { courseId, assignmentId }
         })
 
-        const submission = []
+        const result = []
         for (let i = 0; i < repository.graders.length; i++) {
             const grader = repository.graders[i]
+            const submission = await SubmissionHistory.findOneOrFail({
+                repositoryCourseId: Number(courseId),
+                repositoryAssignmentId: Number(assignmentId),
+                studentUserId: Number(userId),
+                autograderName: grader.name,
+            })
             const details = await SubmissionHistoryDetail.find({
                 repositoryCourseId: Number(courseId),
                 repositoryAssignmentId: Number(assignmentId),
@@ -38,15 +45,16 @@ export async function detail(req: Request, res: Response) {
                 })
             }
 
-            submission.push({
+            result.push({
                 graderName: grader.displayedName,
+                grade: submission.grade,
                 feedbacks
             })
         }
 
         return res.send({
             success: true,
-            submission,
+            result,
         })
     } catch (error) {
         console.log(error)
