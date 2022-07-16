@@ -52,8 +52,8 @@ const task = new AsyncTask('Scan Container', async () => {
     })
 })
 
-export const scannerScheduler = (): ToadScheduler => {
-    const job = new LongIntervalJob({ seconds: Number(process.env.INTERVAL_SCANNER), }, task)
+export const registratorScheduler = (): ToadScheduler => {
+    const job = new LongIntervalJob({ seconds: Number(process.env.INTERVAL_REGISTRATOR), }, task)
     scheduler.addLongIntervalJob(job)
     return scheduler
 }

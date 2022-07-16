@@ -7,7 +7,7 @@ import { autograderRoute } from './Routes/autograder'
 import { submissionRoute } from './Routes/submission'
 import { repositoryRoute } from './Routes/repository'
 import { healthCheckScheduler } from './Scheduler/healthChecker'
-import { scannerScheduler } from './Scheduler/scanner'
+import { registratorScheduler } from './Scheduler/registrator'
 import passport from 'passport'
 import cors from 'cors'
 import path from 'path'
@@ -48,11 +48,11 @@ app.use('/repository', repositoryRoute)
 
 // scheduler
 const healthChecker = healthCheckScheduler()
-const scanner = scannerScheduler()
+const registrator = registratorScheduler()
 
 process.on('SIGTERM', () => {
     healthChecker.stop()
-    scanner.stop()
+    registrator.stop()
 })
 
 export default app
