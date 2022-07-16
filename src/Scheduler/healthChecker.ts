@@ -1,6 +1,7 @@
 import { ToadScheduler, LongIntervalJob, AsyncTask } from 'toad-scheduler'
 import { DockerStatus } from '../Type/Docker'
 import { Autograder } from '../Model/Autograder'
+import { Constant } from '../constant'
 import axios from 'axios'
 
 const scheduler = new ToadScheduler()
@@ -12,7 +13,7 @@ const task = new AsyncTask('Health Check', async () => {
 
             if (grader.status == DockerStatus.RUNNING) {
                 try {
-                    const response = await axios.get(grader.url)
+                    const response = await axios.get(grader.url + Constant.GRADER_HEALTHCHECK_ENDPOINT)
 
                     if (response.data.error) {
                         throw new Error(response.data.message)
@@ -28,7 +29,7 @@ const task = new AsyncTask('Health Check', async () => {
                 console.log('Retry Health Checking', grader.name)
 
                 try {
-                    const response = await axios.get(grader.url)
+                    const response = await axios.get(grader.url + Constant.GRADER_HEALTHCHECK_ENDPOINT)
 
                     if (response.data.error) {
                         throw new Error(response.data.message)

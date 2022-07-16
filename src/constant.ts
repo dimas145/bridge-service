@@ -5,4 +5,8 @@ export class Constant {
     public static WS_FUNCTION_UPDATE_USER: string = 'core_user_update_users'
 
     public static WORKFLOWSTATE: string = 'Released'
+
+    public static GRADER_HEALTHCHECK_ENDPOINT: string = '/health-check'
+    public static GRADER_DESCRIPTION_ENDPOINT: string = '/description'
+    public static GRADER_GRADING_ENDPOINT: string = '/grade'
 }

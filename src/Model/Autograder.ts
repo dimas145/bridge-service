@@ -12,11 +12,11 @@ export class Autograder extends BaseModel {
     @Column({ type: 'text', nullable: false })
     displayedName: string
 
+    @Column({ type: 'text', nullable: false })
+    description: string
+
     @Column({ type: 'text', nullable: true, unique: true })
     containerId: string | null
-
-    @Column({ type: 'text', nullable: true })
-    description: string
 
     @Column({ enum: DockerStatus })
     status: DockerStatus
@@ -36,6 +36,6 @@ export class Autograder extends BaseModel {
     }
 
     public get url(): string {
-        return `http://${this.alias}:${process.env.GRADING_PORT}${process.env.GRADING_ENDPOINT}`
+        return `http://${this.alias}:${process.env.GRADING_PORT}`
     }
 }

@@ -116,7 +116,7 @@ export async function Webhook(req: Request, res: Response) {
             })
 
             try {
-                const response = await axios.post(grader.url, data)
+                const response = await axios.post(grader.url + Constant.GRADER_GRADING_ENDPOINT, data)
 
                 if (!response.data.error) {
                     const responseData = response.data.data

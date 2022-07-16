@@ -3,6 +3,7 @@ import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
 import { Autograder } from '../../Model/Autograder'
 import { GradingPriority } from '../../Type/Grading'
+import { Constant } from '../../constant'
 import axios from 'axios'
 
 export async function simulateWebhook(req: Request, res: Response) {
@@ -51,7 +52,7 @@ export async function simulateWebhook(req: Request, res: Response) {
         })
     } else {
         try {
-            const response = await axios.post(grader.url, {
+            const response = await axios.post(grader.url + Constant.GRADER_GRADING_ENDPOINT, {
                 references: references.map((ref) => ref.content),
                 referencesFileNames: references.map((ref) => `${ref.filename}.${ref.extension}`),
                 solution: rawContentSolution,
