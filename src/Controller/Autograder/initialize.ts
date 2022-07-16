@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { IncomingMessage } from 'http'
 import { Autograder } from '../../Model/Autograder'
 import { DockerStatus } from '../../Type/Docker'
-import { getConnectionManager } from 'typeorm'
 import Docker from 'dockerode'
 
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
@@ -101,39 +100,3 @@ function createAutograderContainerAndRun(grader: Autograder) {
         console.error(err)
     })
 }
-
-// handle exit service, stop and remove all running autograder container
-async function exitHandler(eventType: any) {
-    console.log('clean up before exiting')
-    if (getConnectionManager().connections.length > 0 && (eventType || eventType === 0)) {
-        try {
-            // clean up autograder table
-            const allAutograder = await Autograder.find()
-
-            for (let i = 0; i < allAutograder.length; i++) {
-                const autograder = allAutograder[i]
-                try {
-                    autograder.status = DockerStatus.STOPPED
-                    const container = docker.getContainer(autograder.containerId as string)
-                    await container.stop()
-
-                    autograder.containerId = null
-                } catch (err) {
-                    console.error(`error killing container with id ${autograder.containerId}`)
-                    console.error(err)
-                }
-            }
-
-            await Autograder.save(allAutograder)
-            console.log('clean up done')
-        } catch (err) {
-            console.error(err)
-        }
-
-        console.log(`process exit with eventType: ${eventType}`)
-    }
-}
-
-['exit', 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'uncaughtException', 'SIGTERM'].forEach((eventType) => {
-    process.on(eventType, exitHandler.bind(null, eventType))
-})

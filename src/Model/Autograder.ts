@@ -3,6 +3,7 @@ import { BaseModel } from './Base'
 import { Repository } from './Repository'
 import { SubmissionHistory } from './SubmissionHistory'
 import { DockerStatus } from '../Type/Docker'
+import { Constant } from '../constant'
 
 @Entity()
 export class Autograder extends BaseModel {
@@ -36,6 +37,6 @@ export class Autograder extends BaseModel {
     }
 
     public get url(): string {
-        return `http://${this.alias}:${process.env.GRADING_PORT}`
+        return `http://${this.alias}:${Constant.GRADER_PORT}`
     }
 }

@@ -6,6 +6,10 @@ export class Constant {
 
     public static WORKFLOWSTATE: string = 'Released'
 
+    public static DOCKER_NETWORK: string = 'bridge_service'
+    public static CONTAINER_LABEL: string = 'autograder'
+
+    public static GRADER_PORT: string = '5000'
     public static GRADER_HEALTHCHECK_ENDPOINT: string = '/health-check'
     public static GRADER_DESCRIPTION_ENDPOINT: string = '/description'
     public static GRADER_GRADING_ENDPOINT: string = '/grade'
