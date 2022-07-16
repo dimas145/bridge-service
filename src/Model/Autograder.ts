@@ -7,21 +7,12 @@ import { DockerStatus } from '../Type/Docker'
 @Entity()
 export class Autograder extends BaseModel {
     @PrimaryColumn({ type: 'text', nullable: false })
-    name: string
+    imageName: string
 
     @Column({ type: 'text', nullable: false })
     displayedName: string
 
-    @Column({ type: 'text', nullable: false })
-    repoTag: string
-
-    @Column({ type: 'text', nullable: false })
-    endpoint: string
-
-    @Column({ type: 'integer', nullable: false })
-    port: number
-
-    @Column({ type: 'text', nullable: true })
+    @Column({ type: 'text', nullable: true, unique: true })
     containerId: string | null
 
     @Column({ type: 'text', nullable: true })
@@ -35,4 +26,16 @@ export class Autograder extends BaseModel {
 
     @ManyToMany(() => Repository, repository => repository.graders)
     repository: Repository[]
+
+    public get name(): string {
+        return this.imageName.split('/')[1].split(':')[0]
+    }
+
+    public get alias(): string {
+        return this.containerId?.slice(0, 12) || ''
+    }
+
+    public get url(): string {
+        return `http://${this.alias}:${process.env.GRADING_PORT}${process.env.GRADING_ENDPOINT}`
+    }
 }

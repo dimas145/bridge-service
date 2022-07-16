@@ -50,9 +50,8 @@ export async function simulateWebhook(req: Request, res: Response) {
             message: 'code references doesnt exist in db'
         })
     } else {
-        const graderUrl = `http://${graderName}:${grader.port}${grader.endpoint}`
         try {
-            const response = await axios.post(graderUrl, {
+            const response = await axios.post(grader.url, {
                 references: references.map((ref) => ref.content),
                 referencesFileNames: references.map((ref) => `${ref.filename}.${ref.extension}`),
                 solution: rawContentSolution,
@@ -131,19 +130,5 @@ export async function mockCreateRepo(req: Request, res: Response) {
 
     return res.send({
         success: true,
-    })
-}
-
-export async function test(req: Request, res: Response) {
-    const { courseId, assignmentId } = req.body
-
-    const repo = await Repository.findOneOrFail({
-        relations: ['graders'],
-        where: { courseId, assignmentId }
-    })
-    return res.send({
-        success: true,
-        data: repo,
-        data2: repo.graders
     })
 }

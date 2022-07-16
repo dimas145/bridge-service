@@ -8,34 +8,20 @@ import Docker from 'dockerode'
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Initialize(req: Request, res: Response) {
-    const { dockerUser, name, displayedName, port, endpoint, tag, description } = req.body
+    const { dockerUser, name, tag, displayedName, description } = req.body
 
     if (!dockerUser || !name || !displayedName) {
         return res.status(400).send('Bad request')
     }
 
     // validation, use default value if not specified
-    let graderPort
-    if (!port) {
-        graderPort = 5000
-    } else {
-        graderPort = port
-    }
-
-    let gradingEndpoint
-    if (!endpoint) {
-        gradingEndpoint = '/grade'
-    } else {
-        gradingEndpoint = endpoint
-    }
-
     let useTag
     if (!tag || tag == '') {
         useTag = 'latest'
     } else {
         useTag = tag
     }
-    const repoTag = dockerUser + '/' + name + ':' + useTag
+    const imageName = dockerUser + '/' + name + ':' + useTag
 
     let grader: Autograder
     try {
@@ -60,27 +46,24 @@ export async function Initialize(req: Request, res: Response) {
         }
     } catch (_) {
         grader = Autograder.create({
-            name,
+            imageName,
             displayedName,
-            repoTag,
-            port: graderPort,
-            endpoint: gradingEndpoint,
             description,
         })
     }
 
-    console.log(`Pulling ${repoTag} docker image...`)
+    console.log(`Pulling ${imageName} docker image...`)
     grader.status = DockerStatus.INITIALIZING
     await grader.save()
 
-    docker.pull(repoTag, (err: any, stream: IncomingMessage) => {
+    docker.pull(imageName, (err: any, stream: IncomingMessage) => {
         if (err) console.error(err)
         docker.modem.followProgress(stream, onFinished)
 
         function onFinished(err: any, _: any) {
             if (err)
                 console.error(err)
-            console.log(`Pull ${repoTag} docker image done`)
+            console.log(`Pull ${imageName} docker image done`)
 
             createAutograderContainerAndRun(grader)
         }
@@ -92,9 +75,9 @@ export async function Initialize(req: Request, res: Response) {
 }
 
 function createAutograderContainerAndRun(grader: Autograder) {
-    const finalPort = String(grader.port) + '/tcp'
+    const finalPort = process.env.GRADING_PORT + '/tcp'
     docker.createContainer({
-        Image: grader.repoTag,
+        Image: grader.imageName,
         ExposedPorts: {
             [finalPort]: {}
         },
@@ -102,26 +85,19 @@ function createAutograderContainerAndRun(grader: Autograder) {
             Binds: ['/var/run/docker.sock:/var/run/docker.sock'], // TODO, quick fix for development
             NetworkMode: 'bridge_service',
         },
-        NetworkingConfig: {
-            EndpointsConfig: {
-                'bridge_service': {
-                    Aliases: [grader.name]
-                }
-            }
-        }
     }).then(function (container) {
-        console.log(`Running ${grader.repoTag} docker container with container id: ${container.id}`)
+        console.log(`Running ${grader.imageName} docker container with container id: ${container.id}`)
         container.start(() => {
             grader.containerId = container.id
             grader.status = DockerStatus.RUNNING
             grader.save().then(() => {
-                console.log(`Run ${grader.repoTag} docker container success`)
+                console.log(`Run ${grader.imageName} docker container success`)
             }, (error) => {
                 console.log(error)
             })
         })
     }).catch(function (err) {
-        console.error(`Error running ${grader.repoTag} docker container`)
+        console.error(`Error running ${grader.imageName} docker container`)
         console.error(err)
     })
 }

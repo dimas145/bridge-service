@@ -9,11 +9,10 @@ const task = new AsyncTask('Health Check', async () => {
     return Autograder.find().then(async (graders) => {
         for (let i = 0; i < graders.length; i++) {
             const grader = graders[i]
-            const url = `http://${grader.name}:${grader.port}/health-check`
 
             if (grader.status == DockerStatus.RUNNING) {
                 try {
-                    const response = await axios.get(url)
+                    const response = await axios.get(grader.url)
 
                     if (response.data.error) {
                         throw new Error(response.data.message)
@@ -29,7 +28,7 @@ const task = new AsyncTask('Health Check', async () => {
                 console.log('Retry Health Checking', grader.name)
 
                 try {
-                    const response = await axios.get(url)
+                    const response = await axios.get(grader.url)
 
                     if (response.data.error) {
                         throw new Error(response.data.message)

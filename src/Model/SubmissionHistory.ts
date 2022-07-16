@@ -16,7 +16,7 @@ export class SubmissionHistory extends BaseModel {
     studentUserId: number
 
     @PrimaryColumn()
-    autograderName: string
+    autograderImageName: string
 
     @Column({ type: 'float', nullable: false })
     grade: number

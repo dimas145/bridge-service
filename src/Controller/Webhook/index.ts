@@ -103,8 +103,6 @@ export async function Webhook(req: Request, res: Response) {
         const grader = repository.graders[i]
 
         if (grader.status === DockerStatus.RUNNING) {
-            const graderUrl = `http://${grader.name}:${grader.port}${grader.endpoint}`
-
             const submissionHistory = SubmissionHistory.create({
                 repository,
                 student,
@@ -118,7 +116,7 @@ export async function Webhook(req: Request, res: Response) {
             })
 
             try {
-                const response = await axios.post(graderUrl, data)
+                const response = await axios.post(grader.url, data)
 
                 if (!response.data.error) {
                     const responseData = response.data.data
