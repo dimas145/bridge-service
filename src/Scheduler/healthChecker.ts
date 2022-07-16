@@ -45,7 +45,7 @@ const task = new AsyncTask('Health Check', async () => {
                     grader.save()
                 }
             } else if (grader.status == DockerStatus.STOPPED) { // unregister
-                console.log('Unregister', grader.name)
+                console.log('Unregister', grader.displayedName)
 
                 try {
                     await Autograder.delete({ containerId: grader.containerId })
