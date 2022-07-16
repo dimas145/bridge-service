@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn, OneToMany, Index } from 'typeorm'
 import { BaseModel } from './Base'
-import { SubmissionHistory } from './SubmissionHistory'
+import { Submission } from './Submission'
 
 @Entity()
 export class Student extends BaseModel {
@@ -14,6 +14,6 @@ export class Student extends BaseModel {
     @Column({ type: 'integer', nullable: false })
     gitlabProfileId: number
 
-    @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.student)
-    submissionHistory: SubmissionHistory[]
+    @OneToMany(() => Submission, submission => submission.student)
+    submission: Submission[]
 }

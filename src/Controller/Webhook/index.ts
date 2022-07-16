@@ -5,8 +5,8 @@ import { Webhook as WebhookType } from '../../Type/Webhook'
 import { Student } from '../../Model/Student'
 import { Repository } from '../../Model/Repository'
 import { CodeReference } from '../../Model/CodeReference'
-import { SubmissionHistory } from '../../Model/SubmissionHistory'
-import { SubmissionHistoryDetail } from '../../Model/SubmissionHistoryDetail'
+import { Submission } from '../../Model/Submission'
+import { SubmissionDetail } from '../../Model/SubmissionDetail'
 import { DockerStatus } from '../../Type/Docker'
 import { GradingMethod, GradingPriority } from '../../Type/Grading'
 import axios from 'axios'
@@ -53,7 +53,7 @@ export async function Webhook(req: Request, res: Response) {
     }
 
     if (repository.gradingPriority == GradingPriority.FIRST) {
-        const [_, count] = await SubmissionHistory.findAndCount({ repository, student })
+        const [_, count] = await Submission.findAndCount({ repository, student })
         if (count > 0) { // not accepting any submission
             return
         }
@@ -103,13 +103,13 @@ export async function Webhook(req: Request, res: Response) {
         const grader = repository.graders[i]
 
         if (grader.status === DockerStatus.RUNNING) {
-            const submissionHistory = SubmissionHistory.create({
+            const submission = Submission.create({
                 repository,
                 student,
                 autograder: grader
             })
 
-            const submissionHistoryDetail = SubmissionHistoryDetail.create({
+            const submissionDetail = SubmissionDetail.create({
                 repository,
                 student,
                 autograder: grader
@@ -120,31 +120,31 @@ export async function Webhook(req: Request, res: Response) {
 
                 if (!response.data.error) {
                     const responseData = response.data.data
-                    submissionHistory.grade = responseData.grade
-                    submissionHistory.save()
+                    submission.grade = responseData.grade
+                    submission.save()
 
                     const feedbacks = responseData.feedback
                     for (let j = 0; j < feedbacks.length; j++) {
-                        submissionHistoryDetail.codeReferenceId = references[j].id
-                        submissionHistoryDetail.detail = feedbacks[j]
+                        submissionDetail.codeReferenceId = references[j].id
+                        submissionDetail.detail = feedbacks[j]
 
-                        submissionHistoryDetail.save()
+                        submissionDetail.save()
                     }
                 } else {
                     throw new Error(response.data.message)
                 }
             } catch (error) {
                 console.error(error)
-                submissionHistory.grade = 0
-                await submissionHistory.save()
+                submission.grade = 0
+                await submission.save()
             }
 
             if (repository.gradingMethod == GradingMethod.AVERAGE) {
-                finalGrade += submissionHistory.grade
+                finalGrade += submission.grade
                 count += 1
-            } else if (repository.gradingMethod == GradingMethod.MAXIMUM && submissionHistory.grade > finalGrade ||
-                repository.gradingMethod == GradingMethod.MINIMUM && submissionHistory.grade < finalGrade) {
-                finalGrade = submissionHistory.grade
+            } else if (repository.gradingMethod == GradingMethod.MAXIMUM && submission.grade > finalGrade ||
+                repository.gradingMethod == GradingMethod.MINIMUM && submission.grade < finalGrade) {
+                finalGrade = submission.grade
             }
         }
     }

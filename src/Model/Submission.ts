@@ -5,7 +5,7 @@ import { Repository } from './Repository'
 import { Student } from './Student'
 
 @Entity()
-export class SubmissionHistory extends BaseModel {
+export class Submission extends BaseModel {
     @PrimaryColumn()
     repositoryCourseId: number
 
@@ -21,12 +21,12 @@ export class SubmissionHistory extends BaseModel {
     @Column({ type: 'float', nullable: false })
     grade: number
 
-    @ManyToOne(() => Repository, repository => repository.submissionHistory)
+    @ManyToOne(() => Repository, repository => repository.submission)
     repository: Repository
 
-    @ManyToOne(() => Student, student => student.submissionHistory)
+    @ManyToOne(() => Student, student => student.submission)
     student: Student
 
-    @ManyToOne(() => Autograder, autograder => autograder.submissionHistory)
+    @ManyToOne(() => Autograder, autograder => autograder.submission)
     autograder: Autograder
 }

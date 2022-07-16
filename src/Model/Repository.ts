@@ -2,7 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from 
 import { Autograder } from './Autograder'
 import { BaseModel } from './Base'
 import { CodeReference } from './CodeReference'
-import { SubmissionHistory } from './SubmissionHistory'
+import { Submission } from './Submission'
 import { GradingMethod, GradingPriority } from '../Type/Grading'
 
 @Entity()
@@ -28,8 +28,8 @@ export class Repository extends BaseModel {
     @Column({ type: 'timestamp' })
     dueDate: Date
 
-    @OneToMany(() => SubmissionHistory, submissionHistory => submissionHistory.repository)
-    submissionHistory: SubmissionHistory[]
+    @OneToMany(() => Submission, submission => submission.repository)
+    submission: Submission[]
 
     @OneToMany(() => CodeReference, codeReference => codeReference.repository)
     codeReference: CodeReference[]
