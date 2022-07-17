@@ -27,6 +27,9 @@ export async function Webhook(req: Request, res: Response) {
         token: process.env.GITLAB_PRIVATE_TOKEN
     })
 
+    if (webhookBody.object_attributes.state != 'opened') {
+        return
+    }
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
 
     if (!student) {
