@@ -4,10 +4,13 @@ import { Repository } from '../../Model/Repository'
 import { Autograder } from '../../Model/Autograder'
 import { GradingPriority } from '../../Type/Grading'
 import { Constant } from '../../constant'
+import { Logger } from 'tslog'
 import axios from 'axios'
 
+const log: Logger = new Logger()
+
 export async function simulateWebhook(req: Request, res: Response) {
-    console.log('Simulating...')
+    log.info('Simulating...')
 
     /**
      * How to use:
@@ -61,7 +64,7 @@ export async function simulateWebhook(req: Request, res: Response) {
             })
             return res.send(response.data)
         } catch (error) {
-            console.log(error)
+            log.error(error)
 
             return res.send({
                 success: false,
@@ -91,7 +94,7 @@ export async function mockCreateRepo(req: Request, res: Response) {
         try {
             grader = await Autograder.findOneOrFail({ name: autograders[i] })
         } catch (error) {
-            console.log(error)
+            log.error(error)
             return res.status(400).send({
                 success: false,
                 message: `autograder ${autograders[i]} doesn't exist`
@@ -106,7 +109,7 @@ export async function mockCreateRepo(req: Request, res: Response) {
             gradingPriority: GradingPriority.LAST,
             dueDate: dueDate
         })
-        console.log('Repo already exist, updating')
+        log.info('Repo already exist, updating')
     } else {
         const model = Repository.create({
             assignmentId,
@@ -120,7 +123,7 @@ export async function mockCreateRepo(req: Request, res: Response) {
         try {
             await model.save()
         } catch (error) {
-            console.error(error)
+            log.error(error)
 
             return res.send({
                 success: false,

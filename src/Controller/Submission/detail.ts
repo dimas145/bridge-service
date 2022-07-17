@@ -3,8 +3,12 @@ import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
 import { Submission } from '../../Model/Submission'
 import { SubmissionDetail } from '../../Model/SubmissionDetail'
+import { Logger } from 'tslog'
+
+const log: Logger = new Logger()
 
 export async function detail(req: Request, res: Response) {
+    log.info('Submission detail')
     const { userId, courseId, assignmentId } = req.query
 
     if (!userId || !courseId || !assignmentId) {
@@ -57,7 +61,7 @@ export async function detail(req: Request, res: Response) {
             result,
         })
     } catch (error) {
-        console.log(error)
+        log.error(error)
         return res.status(400).send({
             success: false,
             message: error

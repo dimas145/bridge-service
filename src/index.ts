@@ -1,7 +1,10 @@
-import dotenv from 'dotenv'
-dotenv.config()
 import { createConnection } from 'typeorm'
+import { Logger } from 'tslog'
+import dotenv from 'dotenv'
 import app from './app'
+
+dotenv.config()
+const log: Logger = new Logger()
 
 const main = async () => {
     const PORT = process.env.PORT || 8085
@@ -9,14 +12,14 @@ const main = async () => {
     try {
         const connection = await createConnection()
         await connection.synchronize()
-        console.log('success connect to db')
+        log.info('success connect to db')
     } catch (error) {
-        console.log("Can't connect to db", error)
+        log.info("Can't connect to db", error)
         process.exit(1)
     }
 
     app.listen(PORT, () => {
-        console.log(`Server is running at port: ${PORT}`)
+        log.info(`Server is running at port: ${PORT}`)
     })
 }
 

@@ -2,11 +2,12 @@ import { ToadScheduler, LongIntervalJob, AsyncTask } from 'toad-scheduler'
 import { DockerStatus } from '../Type/Docker'
 import { Autograder } from '../Model/Autograder'
 import { Constant } from '../constant'
+import { Logger } from 'tslog'
 import Docker from 'dockerode'
 import axios from 'axios'
 
+const log: Logger = new Logger()
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
-
 const scheduler = new ToadScheduler()
 
 const task = new AsyncTask('Scan Container', async () => {
@@ -40,14 +41,14 @@ const task = new AsyncTask('Scan Container', async () => {
                     })
 
                     await newGrader.save()
-                    console.log(`new autograder registered: ${newGrader.displayedName}`)
+                    log.info(`new autograder registered: ${newGrader.displayedName}`)
                 }
             } catch (error) {
-                console.error(error)
+                log.error(error)
             }
         }
     }).catch((error) => {
-        console.error(error)
+        log.error(error)
     })
 })
 

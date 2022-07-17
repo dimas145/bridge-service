@@ -2,10 +2,13 @@ import { Request, Response } from 'express'
 import { DockerStatus } from '../../Type/Docker'
 import { Autograder } from '../../Model/Autograder'
 import Docker from 'dockerode'
+import { Logger } from 'tslog'
 
+const log: Logger = new Logger()
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Start(req: Request, res: Response) {
+    log.info('Autograder start')
     const { name } = req.body
 
     if (!name) {
@@ -50,19 +53,19 @@ export async function Start(req: Request, res: Response) {
                 }
             }
         }).then(function (container) {
-            console.log(`Running ${grader.imageName} docker container with container id: ${container.id}`)
+            log.info(`Running ${grader.imageName} docker container with container id: ${container.id}`)
             container.start(() => {
                 grader.containerId = container.id
                 grader.status = DockerStatus.RUNNING
                 grader.save().then(() => {
-                    console.log(`Run ${grader.imageName} docker container success`)
+                    log.info(`Run ${grader.imageName} docker container success`)
                 }, (error) => {
-                    console.log(error)
+                    log.info(error)
                 })
             })
         }).catch(function (err) {
-            console.error(`Error running ${grader.imageName} docker container`)
-            console.error(err)
+            log.error(`Error running ${grader.imageName} docker container`)
+            log.error(err)
         })
 
         return res.send({

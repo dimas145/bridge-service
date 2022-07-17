@@ -2,9 +2,12 @@ import { Request, Response } from 'express'
 import { Projects, ProjectHooks } from '@gitbeaker/node'
 import { Repository } from '../../Model/Repository'
 import { Autograder } from '../../Model/Autograder'
+import { Logger } from 'tslog'
+
+const log: Logger = new Logger()
 
 export async function createRepository(req: Request, res: Response) {
-    console.log(`hit ${new Date()} - create repository`)
+    log.info('Create GitLab repository')
 
     const { name, courseId, assignmentId, gradingPriority, gradingMethod, timeLimit, dueDate, autograders } = req.body
 
@@ -38,7 +41,7 @@ export async function createRepository(req: Request, res: Response) {
             try {
                 grader = await Autograder.findOneOrFail({ displayedName: autograders[i] })
             } catch (error) {
-                console.log(error)
+                log.error(error)
                 return res.status(400).send({
                     success: false,
                     message: `autograder ${autograders[i]} doesn't exist`
@@ -79,7 +82,7 @@ export async function createRepository(req: Request, res: Response) {
         try {
             await model.save()
         } catch (error) {
-            console.log(error)
+            log.error(error)
             return res.send('already exist')
         }
 

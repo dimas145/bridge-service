@@ -9,9 +9,13 @@ import { Submission } from '../../Model/Submission'
 import { SubmissionDetail } from '../../Model/SubmissionDetail'
 import { DockerStatus } from '../../Type/Docker'
 import { GradingMethod, GradingPriority } from '../../Type/Grading'
+import { Logger } from 'tslog'
 import axios from 'axios'
 
+const log: Logger = new Logger()
+
 export async function Webhook(req: Request, res: Response) {
+    log.info('Webhook recieved')
     res.send('received') // just to give 200 to gitlab
 
     if (req.headers['x-gitlab-event'] !== Constant.MERGE_REQUEST_HOOK || req.headers['x-gitlab-token'] !== process.env.GITLAB_WEBHOOK_SECRET_TOKEN) {
@@ -37,6 +41,7 @@ export async function Webhook(req: Request, res: Response) {
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
 
     if (!student) {
+        log.info('Unknown student')
         return // no need to process user that hasn't register
     }
 
@@ -46,22 +51,26 @@ export async function Webhook(req: Request, res: Response) {
         where: repositoryId
     })
     if (!repository) { // no repo
+        log.info('Unknown repository')
         return
     }
 
     const references = await CodeReference.find({ repository })
 
-    if (references.length == 0) { // no reference files
+    if (references.length == 0) {
+        log.info('Reference files missing')
         return
     }
 
-    if (new Date() > repository.dueDate) { // ignore late submission
+    if (new Date() > repository.dueDate) {
+        log.info('Late submission')
         return
     }
 
     if (repository.gradingPriority == GradingPriority.FIRST) {
         const [_, count] = await Submission.findAndCount({ repository, student })
         if (count > 0) { // not accepting any submission
+            log.info('Only accepts first submission')
             return
         }
     }
@@ -89,8 +98,8 @@ export async function Webhook(req: Request, res: Response) {
         solution = file.content
         solutionFileName = file.file_name
     } catch (e) {
-        console.error('error get student source code', projectId)
-        console.error(e)
+        log.error('error get student source code', projectId)
+        log.error(e)
         return
     }
 
@@ -140,7 +149,7 @@ export async function Webhook(req: Request, res: Response) {
                     throw new Error(response.data.message)
                 }
             } catch (error) {
-                console.error(error)
+                log.error(error)
                 submission.grade = 0
                 await submission.save()
             }
@@ -173,8 +182,8 @@ export async function Webhook(req: Request, res: Response) {
                 'applytoall': 0,
             }
         })
-        console.log('success')
+        log.info('success')
     } catch (error) {
-        console.log('error', error)
+        log.error('error', error)
     }
 }

@@ -3,10 +3,13 @@ import { IncomingMessage } from 'http'
 import { Autograder } from '../../Model/Autograder'
 import { DockerStatus } from '../../Type/Docker'
 import Docker from 'dockerode'
+import { Logger } from 'tslog'
 
+const log: Logger = new Logger()
 const docker = new Docker({ socketPath: process.env.DOCKER_SOCKET })
 
 export async function Initialize(req: Request, res: Response) {
+    log.info('Initialize autograder from API')
     const { dockerUser, name, tag, displayedName, description } = req.body
 
     if (!dockerUser || !name || !displayedName) {
@@ -51,18 +54,18 @@ export async function Initialize(req: Request, res: Response) {
         })
     }
 
-    console.log(`Pulling ${imageName} docker image...`)
+    log.info(`Pulling ${imageName} docker image...`)
     grader.status = DockerStatus.INITIALIZING
     await grader.save()
 
     docker.pull(imageName, (err: any, stream: IncomingMessage) => {
-        if (err) console.error(err)
+        if (err) log.error(err)
         docker.modem.followProgress(stream, onFinished)
 
         function onFinished(err: any, _: any) {
             if (err)
-                console.error(err)
-            console.log(`Pull ${imageName} docker image done`)
+                log.error(err)
+            log.info(`Pull ${imageName} docker image done`)
 
             createAutograderContainerAndRun(grader)
         }
@@ -85,18 +88,18 @@ function createAutograderContainerAndRun(grader: Autograder) {
             NetworkMode: 'bridge_service',
         },
     }).then(function (container) {
-        console.log(`Running ${grader.imageName} docker container with container id: ${container.id}`)
+        log.info(`Running ${grader.imageName} docker container with container id: ${container.id}`)
         container.start(() => {
             grader.containerId = container.id
             grader.status = DockerStatus.RUNNING
             grader.save().then(() => {
-                console.log(`Run ${grader.imageName} docker container success`)
+                log.info(`Run ${grader.imageName} docker container success`)
             }, (error) => {
-                console.log(error)
+                log.info(error)
             })
         })
     }).catch(function (err) {
-        console.error(`Error running ${grader.imageName} docker container`)
-        console.error(err)
+        log.error(`Error running ${grader.imageName} docker container`)
+        log.error(err)
     })
 }

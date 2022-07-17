@@ -8,11 +8,13 @@ import { submissionRoute } from './Routes/submission'
 import { repositoryRoute } from './Routes/repository'
 import { healthCheckScheduler } from './Scheduler/healthChecker'
 import { registratorScheduler } from './Scheduler/registrator'
+import { Logger } from 'tslog'
 import passport from 'passport'
 import cors from 'cors'
 import path from 'path'
 
 const app = express()
+const log: Logger = new Logger()
 
 const corsOptions = {
     origin: '*',
@@ -28,10 +30,10 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.all('/ping', (req, res) => {
-    console.log('hit', new Date())
-    console.log('url', req.url)
-    console.log('query', req.query)
-    console.log('body', req.body)
+    log.info('hit', new Date())
+    log.info('url', req.url)
+    log.info('query', req.query)
+    log.info('body', req.body)
     res.json({
         'status': 'running',
         'time': new Date()

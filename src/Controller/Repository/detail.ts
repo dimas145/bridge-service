@@ -1,7 +1,11 @@
 import { Request, Response } from 'express'
 import { Repository } from '../../Model/Repository'
+import { Logger } from 'tslog'
+
+const log: Logger = new Logger()
 
 export async function detail(req: Request, res: Response) {
+    log.info('Repository detail')
     const { courseId, assignmentId } = req.query
 
     if (!courseId || !assignmentId) {
@@ -19,7 +23,7 @@ export async function detail(req: Request, res: Response) {
             repository,
         })
     } catch (error) {
-        console.log(error)
+        log.error(error)
         return res.status(400).send({
             success: false,
             message: error

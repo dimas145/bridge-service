@@ -2,8 +2,12 @@ import { Request, Response } from 'express'
 import axios from 'axios'
 import { Student } from '../../Model/Student'
 import { Constant } from '../../constant'
+import { Logger } from 'tslog'
+
+const log: Logger = new Logger()
 
 export async function updateMoodle(req: Request, res: Response) {
+    log.info('Upfate Moodle user GitLab')
     const userId = JSON.parse(req.query['state']?.toString() || '{}')?.['userId']
 
     const model = Student.create({

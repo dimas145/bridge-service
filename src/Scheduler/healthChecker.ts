@@ -2,8 +2,10 @@ import { ToadScheduler, LongIntervalJob, AsyncTask } from 'toad-scheduler'
 import { DockerStatus } from '../Type/Docker'
 import { Autograder } from '../Model/Autograder'
 import { Constant } from '../constant'
+import { Logger } from 'tslog'
 import axios from 'axios'
 
+const log: Logger = new Logger()
 const scheduler = new ToadScheduler()
 
 const task = new AsyncTask('Health Check', async () => {
@@ -19,14 +21,14 @@ const task = new AsyncTask('Health Check', async () => {
                         throw new Error(response.data.message)
                     }
                 } catch (error) {
-                    console.error('Error Health Checking', grader.name)
-                    console.error(error)
+                    log.error('Error Health Checking', grader.name)
+                    log.error(error)
 
                     grader.status = DockerStatus.STOPPED
                     grader.save()
                 }
             } else if (grader.status == DockerStatus.STOPPED && grader.containerId != null) {   // retry, TODO implement retry a few times?
-                console.log('Retry Health Checking', grader.name)
+                log.info('Retry Health Checking', grader.name)
 
                 try {
                     const response = await axios.get(grader.url + Constant.GRADER_HEALTHCHECK_ENDPOINT)
@@ -38,24 +40,24 @@ const task = new AsyncTask('Health Check', async () => {
                         grader.save()
                     }
                 } catch (error) {
-                    console.error('Error Health Checking', grader.name)
-                    console.error(error)
+                    log.error('Error Health Checking', grader.name)
+                    log.error(error)
 
                     grader.containerId = null
                     grader.save()
                 }
             } else if (grader.status == DockerStatus.STOPPED) { // unregister
-                console.log('Unregister', grader.displayedName)
+                log.info('Unregister', grader.displayedName)
 
                 try {
                     await Autograder.delete({ containerId: grader.containerId })
                 } catch (error) {
-                    console.error(error)
+                    log.error(error)
                 }
             } // else (grader.status == DockerStatus.INITIALIZING) ignore
         }
     }).catch((error) => {
-        console.error(error)
+        log.error(error)
     })
 })
 

@@ -34,6 +34,7 @@
     "passport-gitlab2": "^5.0.0",
     "pg": "^8.6.0",
     "toad-scheduler": "^1.6.1",
+    "tslog": "^3.3.3",
     "typeorm": "^0.2.32"
   }
 }

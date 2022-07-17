@@ -1,9 +1,12 @@
 import { Request, Response } from 'express'
 import { CodeReference } from '../../Model/CodeReference'
 import { Repository } from '../../Model/Repository'
+import { Logger } from 'tslog'
+
+const log: Logger = new Logger()
 
 export async function saveReference(req: Request, res: Response) {
-    console.log(`hit ${new Date()} - save code reference file`)
+    log.info('Save code reference')
 
     const { courseId, assignmentId, contentHash, extension, filename, rawContent } = req.body
 
