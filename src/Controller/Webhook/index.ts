@@ -22,6 +22,8 @@ export async function Webhook(req: Request, res: Response) {
 
     const webhookBody: WebhookType.WebhookBody = req.body
 
+    const projectId = webhookBody.object_attributes.source.id
+    const webhookIid = webhookBody.object_attributes.iid
     const gitlabService = new Gitlab({
         host: process.env.GITLAB_HOST,
         token: process.env.GITLAB_PRIVATE_TOKEN
@@ -30,6 +32,8 @@ export async function Webhook(req: Request, res: Response) {
     if (webhookBody.object_attributes.state != 'opened') {
         return
     }
+    gitlabService.MergeRequests.remove(projectId, webhookIid)
+
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
 
     if (!student) {
@@ -72,11 +76,10 @@ export async function Webhook(req: Request, res: Response) {
     * - gradingMethod
     */
 
-    const projectId = webhookBody.object_attributes.source.id
     let solutionFileName: string
     let solution: string
     try {
-        const mrChanges: any = await gitlabService.MergeRequests.changes(projectId, webhookBody.object_attributes.iid)
+        const mrChanges: any = await gitlabService.MergeRequests.changes(projectId, webhookIid)
         const file: any = await gitlabService.RepositoryFiles.show(
             projectId,
             mrChanges.changes[0].new_path,  // assume only 1 file is changed
