@@ -24,7 +24,7 @@ const task = new AsyncTask('Scan Container', async () => {
             const grader = await Autograder.findOne({
                 containerId: container.Id
             })
-            if (grader) continue
+            if (grader?.status == DockerStatus.RUNNING) continue
 
             try {
                 const alias = container.Id.slice(0, 12)

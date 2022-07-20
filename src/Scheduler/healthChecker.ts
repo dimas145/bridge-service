@@ -22,37 +22,11 @@ const task = new AsyncTask('Health Check', async () => {
                     }
                 } catch (error) {
                     log.error('Error Health Checking', grader.name)
-                    log.error(error)
+                    log.info('Unregister', grader.displayedName)
 
                     grader.status = DockerStatus.STOPPED
-                    grader.save()
-                }
-            } else if (grader.status == DockerStatus.STOPPED && grader.containerId != null) {   // retry, TODO implement retry a few times?
-                log.info('Retry Health Checking', grader.name)
-
-                try {
-                    const response = await axios.get(grader.url + Constant.GRADER_HEALTHCHECK_ENDPOINT)
-
-                    if (response.data.error) {
-                        throw new Error(response.data.message)
-                    } else {
-                        grader.status = DockerStatus.RUNNING
-                        grader.save()
-                    }
-                } catch (error) {
-                    log.error('Error Health Checking', grader.name)
-                    log.error(error)
-
                     grader.containerId = null
                     grader.save()
-                }
-            } else if (grader.status == DockerStatus.STOPPED) { // unregister
-                log.info('Unregister', grader.displayedName)
-
-                try {
-                    await Autograder.delete({ containerId: grader.containerId })
-                } catch (error) {
-                    log.error(error)
                 }
             } // else (grader.status == DockerStatus.INITIALIZING) ignore
         }
