@@ -28,13 +28,13 @@ export async function detail(req: Request, res: Response) {
                 repositoryCourseId: Number(courseId),
                 repositoryAssignmentId: Number(assignmentId),
                 studentUserId: Number(userId),
-                autograderImageName: grader.name,
+                autograderImageName: grader.imageName,
             })
             const details = await SubmissionDetail.find({
                 repositoryCourseId: Number(courseId),
                 repositoryAssignmentId: Number(assignmentId),
                 studentUserId: Number(userId),
-                autograderImageName: grader.name,
+                autograderImageName: grader.imageName,
             })
 
             const feedbacks = []
