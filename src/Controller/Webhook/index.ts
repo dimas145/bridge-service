@@ -138,7 +138,7 @@ export async function Webhook(req: Request, res: Response) {
                     submission.save()
 
                     const feedbacks = responseData.feedback
-                    for (let j = 0; j < references.length; j++) {
+                    for (let j = 0; j < Math.min(references.length, feedbacks.length); j++) {
                         submissionDetail.codeReferenceId = references[j].id
                         submissionDetail.detail = feedbacks[j]
 
