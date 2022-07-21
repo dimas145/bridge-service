@@ -135,14 +135,14 @@ export async function Webhook(req: Request, res: Response) {
                 if (!response.data.error) {
                     const responseData = response.data.data
                     submission.grade = responseData.grade
-                    submission.save()
+                    await submission.save()
 
                     const feedbacks = responseData.feedback
                     for (let j = 0; j < Math.min(references.length, feedbacks.length); j++) {
                         submissionDetail.codeReferenceId = references[j].id
                         submissionDetail.detail = feedbacks[j]
 
-                        submissionDetail.save()
+                        await submissionDetail.save()
                     }
                 } else {
                     throw new Error(response.data.message)
