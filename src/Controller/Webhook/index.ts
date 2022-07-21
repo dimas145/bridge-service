@@ -36,6 +36,12 @@ export async function Webhook(req: Request, res: Response) {
     if (webhookBody.object_attributes.state != 'opened') {
         return
     }
+    const mrChanges: any = await gitlabService.MergeRequests.changes(projectId, webhookIid)
+    const file: any = await gitlabService.RepositoryFiles.show(
+        projectId,
+        mrChanges.changes[0].new_path,  // assume only 1 file is changed
+        mrChanges.diff_refs.head_sha
+    )
     gitlabService.MergeRequests.remove(projectId, webhookIid)
 
     const student = await Student.findOne({ gitlabProfileId: webhookBody.object_attributes.author_id })
@@ -88,13 +94,6 @@ export async function Webhook(req: Request, res: Response) {
     let solutionFileName: string
     let solution: string
     try {
-        const mrChanges: any = await gitlabService.MergeRequests.changes(projectId, webhookIid)
-        const file: any = await gitlabService.RepositoryFiles.show(
-            projectId,
-            mrChanges.changes[0].new_path,  // assume only 1 file is changed
-            mrChanges.diff_refs.head_sha
-        )
-
         solution = file.content
         solutionFileName = file.file_name
     } catch (e) {
