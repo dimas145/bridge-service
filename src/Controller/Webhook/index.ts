@@ -26,7 +26,7 @@ export async function Webhook(req: Request, res: Response) {
 
     const webhookBody: WebhookType.WebhookBody = req.body
 
-    const projectId = webhookBody.object_attributes.source.id
+    const projectId = webhookBody.project.id
     const webhookIid = webhookBody.object_attributes.iid
     const gitlabService = new Gitlab({
         host: process.env.GITLAB_HOST,
